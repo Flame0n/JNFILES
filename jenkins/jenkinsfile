@@ -1,5 +1,5 @@
-library identifier: "rpr_pipelines@${PipelineBranch}", retriever: modernSCM(
+library identifier: "JNFILES@main", retriever: modernSCM(
   [$class: 'GitSCMSource',
-   remote: 'https://github.com/luxteam/rpr_pipelines.git'])
+   remote: 'https://github.com/Flame0n/JNFILES.git'])
 
 hello()
