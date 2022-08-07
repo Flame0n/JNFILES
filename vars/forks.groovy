@@ -5,10 +5,7 @@ def executeCommand(String parameter) {
     """
 }
 
-def call() {
-    println("wooooooh")
-    return 0
-
+def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", String branch="master", String credentialsId="Token", String executionType="cpu"){
     node("rocm"){
         stage("Set up Docker"){
             restartDocker()
@@ -17,8 +14,8 @@ def call() {
             checkout(
                 [
                     $class: 'GitSCM',
-                    userRemoteConfigs: [[url: "https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", credentialsId:'Token']],
-                    branches: [[name: "master"]],
+                    userRemoteConfigs: [[url: repo, credentialsId:credentialsId]],
+                    branches: [[name: branch]],
                     extensions: [
                         [
                             $class: "RelativeTargetDirectory",
@@ -32,4 +29,8 @@ def call() {
             executeCommand(params.executionType)
         }
     }
+}
+
+def call(Map parameters) {
+    executeStages()
 }
