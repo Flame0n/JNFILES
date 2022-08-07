@@ -26,13 +26,19 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflo
             )
         }
         stage("Build execution"){
-
             executeCommand(executionType)
         }
     }
 }
 
 def call(Map parameters) {
-    println(params.executionType)
-    executeStages("https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", "master", "Token", "cpu")
+    try {
+        println(params.executionType)
+        executeStages("https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", "master", "Token", "cpu")
+        currentBuild.result = "SUCCESS"
+        currentBuild.description = "<b>Success</b><br/>"
+    } catch(e) {
+        currentBuild.result = "FAILURE"
+        currentBuild.description = "<b>Failed</b> when docker was executed<br/>"
+    }
 }
