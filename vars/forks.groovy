@@ -1,15 +1,3 @@
-def setUpDocker(){
-    println("Set up docker")
-    // Example with simply shell script
-    sh """
-        systemctl status docker | grep 'Active:'
-        sudo /usr/bin/pkill -f docker
-        sudo /bin/systemctl restart docker
-        docker system prune -a -f
-        systemctl status docker | grep 'Active:'
-    """
-}
-
 def executeCommand(String parameter) {
     println("Build executed")
     sh """
@@ -18,9 +6,12 @@ def executeCommand(String parameter) {
 }
 
 def call() {
+    println("wooooooh")
+    return 0
+
     node("rocm"){
         stage("Set up Docker"){
-            setUpDocker()
+            restartDocker()
         }
         stage("Clone project"){
             checkout(
