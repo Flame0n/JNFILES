@@ -4,5 +4,7 @@ library identifier: "JNFILES@main", retriever: modernSCM(
    credentialsId: 'AVK'])
 
 
-echo "${params.hello}"
-hello()
+println(params)
+Map parameters = [:]
+
+forks()
