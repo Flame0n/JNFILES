@@ -34,5 +34,5 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflo
 
 def call(Map parameters) {
     println(params.executionType)
-    executeStages(repo="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", branch="master", credentialsId="Token", executionType="cpu")
+    executeStages("https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", "master", "Token", "cpu")
 }
