@@ -33,8 +33,8 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflo
 
 def call(Map parameters) {
     try {
-        println(params.executionType)
-        executeStages("https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", "master", "Token", "cpu")
+        
+        executeStages(parameters["repo"], parameters["branch"], parameters["credentials_id"], parameters["executionType"])
         currentBuild.result = "SUCCESS"
         currentBuild.description = "<b>Success</b><br/>"
     } catch(e) {
