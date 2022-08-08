@@ -53,7 +53,7 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/apex", St
     }
 }
 
-def call(Map parameters) {
+def call() {
     try {
         executeStages()
         currentBuild.result = "SUCCESS"
@@ -63,3 +63,5 @@ def call(Map parameters) {
         currentBuild.description = "<b>Failed</b> when docker was executed<br/>"
     }
 }
+
+call()

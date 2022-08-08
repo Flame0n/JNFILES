@@ -55,7 +55,7 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflo
     }
 }
 
-def call(Map parameters) {
+def call() {
     try {
         
         executeStages()
@@ -66,3 +66,5 @@ def call(Map parameters) {
         currentBuild.description = "<b>Failed</b> when docker was executed<br/>"
     }
 }
+
+call()

@@ -5,7 +5,7 @@ library identifier: "JNFILES@main", retriever: modernSCM(
 
 
 println(params)
-Map parameters = ["repo":params.repo,
+ = ["repo":params.repo,
                   "branch":params.branch,
                   "credentials_id":credentials_id,
                   "executionType":executionType]
