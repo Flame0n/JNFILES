@@ -67,7 +67,7 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflo
     }
 }
 
-def call(Map parameters) {
+def call() {
     try {
         executeStages()
         currentBuild.result = "SUCCESS"
