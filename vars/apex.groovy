@@ -25,13 +25,7 @@ def call() {
 
     checkout([$class: 'GitSCM',
                     userRemoteConfigs: [[url: gitRepo, credentialsId: creds]],
-                    branches: [[name: "master"]],
-                    extensions: [
-                        [
-                            $class: "RelativeTargetDirectory",
-                            relativeTargetDir: "build"
-                        ]
-                    ],
+                    branches: [[name: "master"]]
                 ]
             )
     dir("build"){

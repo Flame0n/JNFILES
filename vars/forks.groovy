@@ -1,7 +1,7 @@
 def executeCommand(String parameter) {
     println("Build executed")
     sh """
-        build/tensorflow/tools/ci_build/ci_build.sh ROCM ./build/tensorflow/tools/ci_build/linux/rocm/run_${parameter}.sh
+        tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/run_${parameter}.sh
     """
 }
 
@@ -15,13 +15,7 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflo
                 [
                     $class: 'GitSCM',
                     userRemoteConfigs: [[url: repo, credentialsId:credentialsId]],
-                    branches: [[name: branch]],
-                    extensions: [
-                        [
-                            $class: "RelativeTargetDirectory",
-                            relativeTargetDir: "build"
-                        ]
-                    ],
+                    branches: [[name: branch]]
                 ]
             )
         }

@@ -15,7 +15,7 @@ def setUpDocker(){
 def executeCommand(String parameter) {
     println("Build executed")
     sh """
-        build/tensorflow/tools/ci_build/ci_build.sh ROCM ./build/tensorflow/tools/ci_build/linux/rocm/run_${parameter}.sh
+        tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/run_${parameter}.sh
     """
 }
 
@@ -27,13 +27,7 @@ def call() {
         stage("Clone project"){
             checkout([$class: 'GitSCM',
                     userRemoteConfigs: [[url: gitRepo, credentialsId: creds]],
-                    branches: [[name: "master"]],
-                    extensions: [
-                        [
-                            $class: "RelativeTargetDirectory",
-                            relativeTargetDir: "build"
-                        ]
-                    ],
+                    branches: [[name: "master"]]
                 ]
             )
         }
