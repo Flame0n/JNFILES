@@ -10,121 +10,117 @@ def restartDocker(){
 
 def executeCommand() {
     println("Build executed")
-    if (parameter) {
-        sh """
-            ### PY3.6 ###
-            set +e
-            #!/bin/bash -x
+    sh """
+        ### PY3.6 ###
+        set +e
+        #!/bin/bash -x
 
-            ### START DOCKER CONTAINER ###
-            docker_image=centos:7
-            #todo - add rocm ver to the tags
-            docker run -it --detach --privileged --network=host --device=/dev/kfd --device=/dev/dri --ipc="host" --pid="host" --shm-size 32G --group-add video --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v `pwd`:/deepspeed_base -v `pwd`/data:/data --name centos_7_rocm --user root \$docker_image
+        ### START DOCKER CONTAINER ###
+        docker_image=centos:7
+        #todo - add rocm ver to the tags
+        docker run -it --detach --privileged --network=host --device=/dev/kfd --device=/dev/dri --ipc="host" --pid="host" --shm-size 32G --group-add video --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v `pwd`:/deepspeed_base -v `pwd`/data:/data --name centos_7_rocm --user root \$docker_image
 
-            docker exec centos_7_rocm bash -c "yum -y install git java-1.8.0-openjdk python; yum clean all"
+        docker exec centos_7_rocm bash -c "yum -y install git java-1.8.0-openjdk python; yum clean all"
 
-            docker exec centos_7_rocm bash -c "yum --enablerepo=extras install -y epel-release"
+        docker exec centos_7_rocm bash -c "yum --enablerepo=extras install -y epel-release"
 
-            docker exec centos_7_rocm bash -c "yum -y install \
-                ca-certificates \
-                bc \
-                bridge-utils \
-                cmake \
-                cmake3 \
-                devscripts \
-                dkms \
-                doxygen \
-                dpkg \
-                dpkg-dev \
-                dpkg-perl \
-                elfutils-libelf-devel \
-                expect \
-                file \
-                python3 \
-                gettext \
-                gcc-c++ \
-                libgcc \
-                glibc.i686 \
-                libcxx-devel \
-                ncurses \
-                ncurses-base \
-                ncurses-libs \
-                numactl-devel \
-                numactl-libs \
-                libssh \
-                libunwind-devel \
-                libunwind \
-                llvm \
-                llvm-libs \
-                make \
-                openssl \
-                openssl-libs \
-                openssh \
-                openssh-clients \
-                pciutils \
-                pciutils-devel \
-                pciutils-libs \
-                python \
-                python-pip \
-                python-devel \
-                pkgconfig \
-                pth \
-                qemu-kvm \
-                re2c \
-                kmod \
-                file \
-                rpm \
-                rpm-build \
-                subversion \
-                wget"
-                
-            docker exec centos_7_rocm bash -c "yum --enablerepo=extras install -y fakeroot"
+        docker exec centos_7_rocm bash -c "yum -y install \
+            ca-certificates \
+            bc \
+            bridge-utils \
+            cmake \
+            cmake3 \
+            devscripts \
+            dkms \
+            doxygen \
+            dpkg \
+            dpkg-dev \
+            dpkg-perl \
+            elfutils-libelf-devel \
+            expect \
+            file \
+            python3 \
+            gettext \
+            gcc-c++ \
+            libgcc \
+            glibc.i686 \
+            libcxx-devel \
+            ncurses \
+            ncurses-base \
+            ncurses-libs \
+            numactl-devel \
+            numactl-libs \
+            libssh \
+            libunwind-devel \
+            libunwind \
+            llvm \
+            llvm-libs \
+            make \
+            openssl \
+            openssl-libs \
+            openssh \
+            openssh-clients \
+            pciutils \
+            pciutils-devel \
+            pciutils-libs \
+            python \
+            python-pip \
+            python-devel \
+            pkgconfig \
+            pth \
+            qemu-kvm \
+            re2c \
+            kmod \
+            file \
+            rpm \
+            rpm-build \
+            subversion \
+            wget"
+            
+        docker exec centos_7_rocm bash -c "yum --enablerepo=extras install -y fakeroot"
 
-            docker exec centos_7_rocm bash -c "yum clean all"
+        docker exec centos_7_rocm bash -c "yum clean all"
 
-            docker exec centos_7_rocm bash -c "yum install -y centos-release-scl"
+        docker exec centos_7_rocm bash -c "yum install -y centos-release-scl"
 
-            docker exec centos_7_rocm bash -c "yum install -y devtoolset-7"
+        docker exec centos_7_rocm bash -c "yum install -y devtoolset-7"
 
-            docker exec centos_7_rocm bash -c "yum install -y devtoolset-7-libatomic-devel devtoolset-7-elfutils-libelf-devel"
+        docker exec centos_7_rocm bash -c "yum install -y devtoolset-7-libatomic-devel devtoolset-7-elfutils-libelf-devel"
 
-            docker exec centos_7_rocm bash -c "yum clean all"
+        docker exec centos_7_rocm bash -c "yum clean all"
 
-            docker exec centos_7_rocm bash -c "echo -e '[ROCm]\nname=ROCm\nbaseurl=https://repo.radeon.com/rocm/yum/\$ROCM_VERSION\nenabled=1\ngpgcheck=0' >> /etc/yum.repos.d/rocm.repo"
+        docker exec centos_7_rocm bash -c "echo -e '[ROCm]\nname=ROCm\nbaseurl=https://repo.radeon.com/rocm/yum/\$ROCM_VERSION\nenabled=1\ngpgcheck=0' >> /etc/yum.repos.d/rocm.repo"
 
-            docker exec centos_7_rocm bash -c "yum install -y rocm-dev rocm-libs"
+        docker exec centos_7_rocm bash -c "yum install -y rocm-dev rocm-libs"
 
-            docker exec centos_7_rocm bash -c "export PATH=/opt/rh/devtoolset-7/root/usr/bin:/opt/rocm/hcc/bin:/opt/rocm/hip/bin:/opt/rocm/bin:/opt/rocm/hcc/bin:\${PATH:+:\${PATH}}"
+        docker exec centos_7_rocm bash -c "export PATH=/opt/rh/devtoolset-7/root/usr/bin:/opt/rocm/hcc/bin:/opt/rocm/hip/bin:/opt/rocm/bin:/opt/rocm/hcc/bin:\${PATH:+:\${PATH}}"
 
-            docker exec centos_7_rocm bash -c "export MANPATH=/opt/rh/devtoolset-7/root/usr/share/man:\${MANPATH}"
+        docker exec centos_7_rocm bash -c "export MANPATH=/opt/rh/devtoolset-7/root/usr/share/man:\${MANPATH}"
 
-            docker exec centos_7_rocm bash -c "export INFOPATH=/opt/rh/devtoolset-7/root/usr/share/info\${INFOPATH:+:\${INFOPATH}}"
+        docker exec centos_7_rocm bash -c "export INFOPATH=/opt/rh/devtoolset-7/root/usr/share/info\${INFOPATH:+:\${INFOPATH}}"
 
-            docker exec centos_7_rocm bash -c "export PCP_DIR=/opt/rh/devtoolset-7/root"
+        docker exec centos_7_rocm bash -c "export PCP_DIR=/opt/rh/devtoolset-7/root"
 
-            docker exec centos_7_rocm bash -c "export PERL5LIB=/opt/rh/devtoolset-7/root//usr/lib64/perl5/vendor_perl:/opt/rh/devtoolset-7/root/usr/lib/perl5:/opt/rh/devtoolset-7/root//usr/share/perl5/"
+        docker exec centos_7_rocm bash -c "export PERL5LIB=/opt/rh/devtoolset-7/root//usr/lib64/perl5/vendor_perl:/opt/rh/devtoolset-7/root/usr/lib/perl5:/opt/rh/devtoolset-7/root//usr/share/perl5/"
 
-            docker exec centos_7_rocm bash -c "export LD_LIBRARY_PATH=/opt/rocm/lib:/usr/local/lib:/opt/rh/devtoolset-7/root\$rpmlibdir\$rpmlibdir32\${LD_LIBRARY_PATH:+:\${LD_LIBRARY_PATH}}"
+        docker exec centos_7_rocm bash -c "export LD_LIBRARY_PATH=/opt/rocm/lib:/usr/local/lib:/opt/rh/devtoolset-7/root\$rpmlibdir\$rpmlibdir32\${LD_LIBRARY_PATH:+:\${LD_LIBRARY_PATH}}"
 
-            docker exec centos_7_rocm bash -c "export PYTHONPATH=/opt/rh/devtoolset-7/root/usr/lib64/python\$pythonvers/site-packages:/opt/rh/devtoolset-7/root/usr/lib/python\$pythonvers/"
+        docker exec centos_7_rocm bash -c "export PYTHONPATH=/opt/rh/devtoolset-7/root/usr/lib64/python\$pythonvers/site-packages:/opt/rh/devtoolset-7/root/usr/lib/python\$pythonvers/"
 
-            docker exec centos_7_rocm bash -c "export LDFLAGS='-Wl,-rpath=/opt/rh/devtoolset-7/root/usr/lib64 -Wl,-rpath=/opt/rh/devtoolset-7/root/usr/lib'"
+        docker exec centos_7_rocm bash -c "export LDFLAGS='-Wl,-rpath=/opt/rh/devtoolset-7/root/usr/lib64 -Wl,-rpath=/opt/rh/devtoolset-7/root/usr/lib'"
 
-            docker exec centos_7_rocm bash -c "exit"
+        docker exec centos_7_rocm bash -c "exit"
 
-            docker commit centos_7_rocm rocm/pytorch-private:centos_7_rocm
+        docker commit centos_7_rocm rocm/pytorch-private:centos_7_rocm
 
-            IMAGE_ID=$(docker images | grep centos_7_rocm | awk '{ print \$3 }')
+        IMAGE_ID=$(docker images | grep centos_7_rocm | awk '{ print \$3 }')
 
-            docker tag \$IMAGE_ID rocm/pytorch-private:centos_7_rocm
+        docker tag \$IMAGE_ID rocm/pytorch-private:centos_7_rocm
 
-            docker login --username=rraminen --password=\$DOCKER_PASS 
+        docker login --username=rraminen --password=\$DOCKER_PASS 
 
-            docker push rocm/pytorch-private:centos_7_rocm
-        """
-    } else {
-        throw e
-    }
+        docker push rocm/pytorch-private:centos_7_rocm
+    """
 }
 
 def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/apex", String branch="master", String credentialsId="ROCm-Apps-Test from 2020-01-06"){

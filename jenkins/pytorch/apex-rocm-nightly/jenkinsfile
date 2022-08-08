@@ -11,30 +11,26 @@ def restartDocker(){
 
 def executeCommand() {
     println("Build executed")
-    if (parameter) {
-        sh """
-            docker_image=rocm/pytorch:latest
+    sh """
+        docker_image=rocm/pytorch:latest
 
-            #docker build . -f Dockerfile -t \$docker_image
-            docker run -it --detach --network=host --device=/dev/kfd --device=/dev/dri --ipc=host --shm-size 16G  --group-add video --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v `pwd`:/apex --name apex-rocm-nightly \$docker_image
-            docker exec apex-rocm-nightly bash -c "pip uninstall -y apex"
-            docker exec apex-rocm-nightly bash -c "pip install ninja"
+        #docker build . -f Dockerfile -t \$docker_image
+        docker run -it --detach --network=host --device=/dev/kfd --device=/dev/dri --ipc=host --shm-size 16G  --group-add video --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v `pwd`:/apex --name apex-rocm-nightly \$docker_image
+        docker exec apex-rocm-nightly bash -c "pip uninstall -y apex"
+        docker exec apex-rocm-nightly bash -c "pip install ninja"
 
-            ### Install Apex ###
-            docker exec apex-rocm-nightly bash -c "cd /apex && python setup.py install --cpp_ext --cuda_ext bdist_wheel 2>&1 |  tee apex_build.log"
+        ### Install Apex ###
+        docker exec apex-rocm-nightly bash -c "cd /apex && python setup.py install --cpp_ext --cuda_ext bdist_wheel 2>&1 |  tee apex_build.log"
 
-            ### Single-GPU unit tests ###
-            docker exec apex-rocm-nightly bash -c "cd /apex/tests/L0/ && bash run_rocm.sh"
+        ### Single-GPU unit tests ###
+        docker exec apex-rocm-nightly bash -c "cd /apex/tests/L0/ && bash run_rocm.sh"
 
-            ### Multi-GPU unit tests ###
-            docker exec apex-rocm-nightly bash -c "cd /apex/tests/distributed/ && bash run_rocm_distributed.sh"
+        ### Multi-GPU unit tests ###
+        docker exec apex-rocm-nightly bash -c "cd /apex/tests/distributed/ && bash run_rocm_distributed.sh"
 
-            ### WHEEL ###
-            docker exec apex-rocm-nightly bash -c "cd /apex; cp -a dist/*whl wheels/"
-        """
-    } else {
-        throw e
-    }
+        ### WHEEL ###
+        docker exec apex-rocm-nightly bash -c "cd /apex; cp -a dist/*whl wheels/"
+    """
 }
 
 def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/apex", String branch="master", String credentialsId="ROCm-Apps-Test from 2020-01-06"){
