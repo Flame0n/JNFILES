@@ -3,11 +3,6 @@ library identifier: "JNFILES@main", retriever: modernSCM(
    remote: 'https://github.com/Flame0n/JNFILES.git',
    credentialsId: 'AVK'])
 
-
-println(params)
- = ["repo":params.repo,
-                  "branch":params.branch,
-                  "credentials_id":credentials_id,
-                  "executionType":executionType]
+def parameters = [:]
 
 forks(parameters)
