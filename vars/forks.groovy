@@ -5,7 +5,7 @@ def executeCommand(String executionType) {
     """
 }
 
-def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", String branch="master", String credentialsId="Token"){
+def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", String branch="develop-upstream", String credentialsId="Token"){
     Map stages = [:]
     List listOfStages = ["run_cpu", "run_gpu_multi", "run_gpu_single", "rocm_ci_sanity"]
 
