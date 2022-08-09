@@ -17,7 +17,6 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflo
                 checkout(
                     [
                         $class: 'GitSCM',
-                        userRemoteConfigs: [[url: repo, credentialsId:credentialsId]],
                         branches: [[name: branch]]
                     ]
                 )
