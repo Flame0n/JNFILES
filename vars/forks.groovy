@@ -9,8 +9,8 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflo
     Map stages = [:]
     List listOfStages = ["run_cpu", "run_gpu_multi", "run_gpu_single", "rocm_ci_sanity"]
     String branch="develop-upstream"
-    if (env.BRANCH_NAME) {
-        branch = env.BRANCH_NAME
+    if (env.CHANGE_BRANCH) {
+        branch = env.CHANGE_BRANCH
     }
     listOfStages.each() {
         stages[it] = {
