@@ -5,10 +5,13 @@ def executeCommand(String executionType) {
     """
 }
 
-def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", String branch="develop-upstream", String credentialsId="Token"){
+def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", String credentialsId="Token"){
     Map stages = [:]
     List listOfStages = ["run_cpu", "run_gpu_multi", "run_gpu_single", "rocm_ci_sanity"]
-
+    String branch="develop-upstream"
+    if (env.BRANCH_NAME) {
+        branch = env.BRANCH_NAME
+    }
     listOfStages.each() {
         stages[it] = {
             def label = it == "run_gpu_multi" ? "rocm&&multi_gpu" : "rocm"
