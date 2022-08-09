@@ -10,23 +10,27 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflo
     List listOfStages = ["run_cpu", "run_gpu_multi", "run_gpu_single", "rocm_ci_sanity"]
     String branch="develop-upstream"
     if (env.GIT_BRANCH && env.GIT_URL) {
-        branch = env.CHANGE_BRANCH
+        branch = env.GIT_BRANCH
         repo = env.GIT_URL
     }
     listOfStages.each() {
         stages[it] = {
-            def label = it == "run_gpu_multi" ? "rocm&&multi_gpu" : "rocm"
-            node(label){
-                restartDocker()
-                checkout(
-                    [
-                        $class: 'GitSCM',
-                        userRemoteConfigs: [[url: repo]],
-                        branches: [[name: branch]]
-                    ]
-                )
-                executeCommand(it)
-            }
+            try{
+                def label = it == "run_gpu_multi" ? "rocm&&multi_gpu" : "rocm"
+                node(label){
+                    restartDocker()
+                    checkout(
+                        [
+                            $class: 'GitSCM',
+                            userRemoteConfigs: [[url: repo]],
+                            branches: [[name: branch]]
+                        ]
+                    )
+                    executeCommand(it)
+                }
+            } catch (e) {
+                
+            } 
         }
     }
 
@@ -40,6 +44,5 @@ def call(Map parameters) {
         currentBuild.description = "<b>Success</b><br/>"
     } catch(e) {
         currentBuild.result = "FAILURE"
-        currentBuild.description = "<b>Failed</b> when docker was executed<br/>"
     }
 }
