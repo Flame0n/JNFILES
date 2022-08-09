@@ -1,7 +1,7 @@
 def executeCommand(String executionType) {
     println("Build executed")
     sh """
-        tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/run_${executionType}.sh
+        tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/${executionType}.sh
     """
 }
 
@@ -25,7 +25,7 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflo
                         branches: [[name: branch]]
                     ]
                 )
-                executeCommand(executionType)
+                executeCommand(it)
             }
         }
     }
