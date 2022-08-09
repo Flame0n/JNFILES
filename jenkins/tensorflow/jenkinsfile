@@ -4,5 +4,5 @@ library identifier: "JNFILES@main", retriever: modernSCM(
    credentialsId: 'AVK'])
 
 def parameters = [:]
-println(BRANCH_NAME)
+println(env.BRANCH_NAME)
 forks(parameters)
