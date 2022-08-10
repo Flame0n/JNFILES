@@ -12,20 +12,22 @@ def call() {
 	--device=/dev/kfd\
 	--device=/dev/dri \
 	"
+	def tensorflowRepo = ''
+	def tensorflowBranch= ''
 
 	if (env.JOB_NAME.contains("master")){
-		def tensorflowRepo = 'https://github.com/tensorflow/tensorflow'
-		def tensorflowBranch= 'master'
+		tensorflowRepo = 'https://github.com/tensorflow/tensorflow'
+		tensorflowBranch= 'master'
 	} else {
-		def tensorflowRepo = 'https://github.com/ROCmSoftwarePlatform/tensorflow-upstream'
+		tensorflowRepo = 'https://github.com/ROCmSoftwarePlatform/tensorflow-upstream'
 		if (env.JOB_NAME.contains("r2.8-rocm-enhanced")) {
-			def tensorflowBranch= 'r2.8-rocm-enhanced'
+			tensorflowBranch= 'r2.8-rocm-enhanced'
 		} else if (env.JOB_NAME.contains('r2.9-rocm-enhanced')) {
-			def tensorflowBranch= 'r2.9-rocm-enhanced'
+			tensorflowBranch= 'r2.9-rocm-enhanced'
 		} else if (env.JOB_NAME.contains('r2.10-rocm-enhanced')) {
-			def tensorflowBranch= 'r2.10-rocm-enhanced'
+			tensorflowBranch= 'r2.10-rocm-enhanced'
 		} else if (env.JOB_NAME.contains('develop-upstream')) {
-			def tensorflowBranch= 'develop-upstream'
+			tensorflowBranch= 'develop-upstream'
 		} else {
 			throw new Exception("Failed to parse project repo and branch")
 		}
