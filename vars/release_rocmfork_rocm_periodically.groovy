@@ -11,7 +11,6 @@ def call() {
 	--security-opt seccomp=unconfined \
 	--device=/dev/kfd\
 	--device=/dev/dri \
-
 	"
 
 	if (env.JOB_NAME.contains("master")){
