@@ -39,9 +39,9 @@ def call() {
 
 	if (tensorflowRepo == 'https://github.com/tensorflow/tensorflow') {
 		DOCKER_IMAGES = ['rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.0.0-multipython']
-	} else if (tensorflowBranch== 'r2.8-rocm-enhanced' || tensorflowBranch== 'develop-upstream') {
+	} else if (tensorflowBranch == 'r2.8-rocm-enhanced' || tensorflowBranch == 'develop-upstream') {
 		DOCKER_IMAGES << 'rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.1.0-multipython'
-	} else if (tensorflowBranch== 'r2.9-rocm-enhanced' || tensorflowBranch== 'r2.10-rocm-enhanced') {
+	} else if (tensorflowBranch == 'r2.9-rocm-enhanced' || tensorflowBranch == 'r2.10-rocm-enhanced') {
 		DOCKER_IMAGES << 'rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.1.3-multipython'
 	}
 
