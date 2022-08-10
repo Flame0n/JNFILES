@@ -36,7 +36,8 @@ def executeStages(){
                     executeCommand(it)
                 }
             } catch (e) {
-                println("[ERROR] Failed te")
+                currentBuild.result = "FAILURE"
+                println("[ERROR] Failed on stage ${it}")
             } 
         }
     }

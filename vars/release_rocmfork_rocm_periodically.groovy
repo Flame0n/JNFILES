@@ -1,6 +1,4 @@
 def call() {
-	def TF_REPO = 'https://github.com/tensorflow/tensorflow'
-	def TF_BRANCH = 'master'
 	def TF_CLONE_DIR = 'tensorflow'
 	def TF_ARTIFACTS_DIR = 'artifactory'
 	def DOCKER_IMAGES = ['rocm/tensorflow-autobuilds:ubuntu20.04-rocm5.2.0-multipython']
@@ -15,22 +13,40 @@ def call() {
 	--device=/dev/dri \ 
 	"
 
-	if (env.GIT_BRANCH == "master" || env.GIT_BRANCH == "develop-upstream") {
+	if (env.JOB_NAME.contains("master")){
+		def REPO = 'https://github.com/tensorflow/tensorflow'
+		def BRANCH = 'master'
+	} else {
+		def REPO = 'https://github.com/ROCmSoftwarePlatform/tensorflow-upstream'
+		if (env.JOB_NAME.contains("r2.8-rocm-enhanced")) {
+			def BRANCH = 'r2.8-rocm-enhanced'
+		} else if (env.JOB_NAME.contains('r2.9-rocm-enhanced')) {
+			def BRANCH = 'r2.9-rocm-enhanced'
+		} else if (env.JOB_NAME.contains('r2.10-rocm-enhanced')) {
+			def BRANCH = 'r2.10-rocm-enhanced'
+		} else if (env.JOB_NAME.contains('develop-upstream')) {
+			def BRANCH = 'develop-upstream'
+		} else {
+			error "Failed via parsing project repository and branch"
+		}
+	}
+
+	if (BRANCH == "master" || BRANCH == "develop-upstream") {
 		DOCKER_RUN_OPTIONS += "\n-e IS_NIGHTLY=1 \\"
 	}
 
-	if (env.GIT_URL == 'https://github.com/tensorflow/tensorflow') {
+	if (REPO == 'https://github.com/tensorflow/tensorflow') {
 		DOCKER_IMAGES = ['rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.0.0-multipython']
-	} else if (env.GIT_BRANCH == 'r2.8-rocm-enhanced' || env.GIT_BRANCH == 'develop-upstream') {
+	} else if (BRANCH == 'r2.8-rocm-enhanced' || BRANCH == 'develop-upstream') {
 		DOCKER_IMAGES << 'rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.1.0-multipython'
-	} else if (env.GIT_BRANCH == 'r2.9-rocm-enhanced' || env.GIT_BRANCH == 'r2.10-rocm-enhanced') {
+	} else if (BRANCH == 'r2.9-rocm-enhanced' || BRANCH == 'r2.10-rocm-enhanced') {
 		DOCKER_IMAGES << 'rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.1.3-multipython'
 	}
 
 	def stages = [:]
 
 	DOCKER_IMAGES.each() {
-		def stage = it.split('/')
+		stage = it.split('/')
 		stage = stage[stage.size() - 2]
 		stages[stage] = {
 			node("rocm") {
@@ -45,8 +61,8 @@ def call() {
 							println("[INFO] Clone ROCm TF Github Repo")
 							checkout scm: [
 								$class: 'GitSCM',
-								userRemoteConfigs: [[url: "${TF_REPO}"]],
-								branches: [[name: "*/${TF_BRANCH}"]],
+								userRemoteConfigs: [[url: "${REPO}"]],
+								branches: [[name: "*/${BRANCH}"]],
 								extensions: [[$class: "RelativeTargetDirectory", relativeTargetDir: "${TF_CLONE_DIR}"]],
 							]
 						}
@@ -100,10 +116,10 @@ def call() {
 										mv $filename $new_filename; \
 										done'						
 						}
-
 					}
 				} catch(e) {
-					
+					println("[ERROR] FAILED on ${it} stage")
+					currentBuild.result = "FAILURE"
 				} finally {
 					archiveArtifacts artifacts: "${TF_ARTIFACTS_DIR}/*", fingerprint: true
 					cleanWs()
@@ -111,4 +127,6 @@ def call() {
 			}
 		}
 	}
+
+	parallel stages
 }
