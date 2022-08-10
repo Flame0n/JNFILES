@@ -14,32 +14,32 @@ def call() {
 	"
 
 	if (env.JOB_NAME.contains("master")){
-		def REPO = 'https://github.com/tensorflow/tensorflow'
-		def BRANCH = 'master'
+		def projectRepo = 'https://github.com/tensorflow/tensorflow'
+		def projectBranch = 'master'
 	} else {
-		def REPO = 'https://github.com/ROCmSoftwarePlatform/tensorflow-upstream'
+		def projectRepo = 'https://github.com/ROCmSoftwarePlatform/tensorflow-upstream'
 		if (env.JOB_NAME.contains("r2.8-rocm-enhanced")) {
-			def BRANCH = 'r2.8-rocm-enhanced'
+			def projectBranch = 'r2.8-rocm-enhanced'
 		} else if (env.JOB_NAME.contains('r2.9-rocm-enhanced')) {
-			def BRANCH = 'r2.9-rocm-enhanced'
+			def projectBranch = 'r2.9-rocm-enhanced'
 		} else if (env.JOB_NAME.contains('r2.10-rocm-enhanced')) {
-			def BRANCH = 'r2.10-rocm-enhanced'
+			def projectBranch = 'r2.10-rocm-enhanced'
 		} else if (env.JOB_NAME.contains('develop-upstream')) {
-			def BRANCH = 'develop-upstream'
+			def projectBranch = 'develop-upstream'
 		} else {
-			error "Failed via parsing project repository and branch"
+			error "Failed via parsing project projectRepository and projectBranch"
 		}
 	}
 
-	if (BRANCH == "master" || BRANCH == "develop-upstream") {
+	if (projectBranch == "master" || projectBranch == "develop-upstream") {
 		DOCKER_RUN_OPTIONS += "-e IS_NIGHTLY=1 \\"
 	}
 
-	if (REPO == 'https://github.com/tensorflow/tensorflow') {
+	if (projectRepo == 'https://github.com/tensorflow/tensorflow') {
 		DOCKER_IMAGES = ['rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.0.0-multipython']
-	} else if (BRANCH == 'r2.8-rocm-enhanced' || BRANCH == 'develop-upstream') {
+	} else if (projectBranch == 'r2.8-rocm-enhanced' || projectBranch == 'develop-upstream') {
 		DOCKER_IMAGES << 'rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.1.0-multipython'
-	} else if (BRANCH == 'r2.9-rocm-enhanced' || BRANCH == 'r2.10-rocm-enhanced') {
+	} else if (projectBranch == 'r2.9-rocm-enhanced' || projectBranch == 'r2.10-rocm-enhanced') {
 		DOCKER_IMAGES << 'rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.1.3-multipython'
 	}
 
@@ -58,11 +58,11 @@ def call() {
 						}
 						
 						stage("Clone ROCm TF") {
-							println("[INFO] Clone ROCm TF Github Repo")
+							println("[INFO] Clone ROCm TF Github projectRepo")
 							checkout scm: [
 								$class: 'GitSCM',
-								userRemoteConfigs: [[url: "${REPO}"]],
-								branches: [[name: "*/${BRANCH}"]],
+								userRemoteConfigs: [[url: "${projectRepo}"]],
+								projectBranches: [[name: "*/${projectBranch}"]],
 								extensions: [[$class: "RelativeTargetDirectory", relativeTargetDir: "${TF_CLONE_DIR}"]],
 							]
 						}
