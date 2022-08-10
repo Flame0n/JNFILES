@@ -5,7 +5,7 @@ def creds = "Token"
 
 node("build-only"){
     checkout([$class: 'GitSCM',
-            userRemoteConfigs: [[url: repo, credentialsId:creds]],
+            userRemoteConfigs: [[url: repo]],
             branches: [[name: branch]],
         ]
     )

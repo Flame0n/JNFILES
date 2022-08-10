@@ -1,5 +1,3 @@
-def gitRepo = "https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/"
-def creds = "Token"
 def setUpDocker(){
     println("Set up docker")
     // Example with simply shell script
@@ -26,7 +24,7 @@ def call() {
         }
         stage("Clone project"){
             checkout([$class: 'GitSCM',
-                    userRemoteConfigs: [[url: gitRepo, credentialsId: creds]],
+                    userRemoteConfigs: [[url: "https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/"]],
                     branches: [[name: "master"]]
                 ]
             )

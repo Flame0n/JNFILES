@@ -38,7 +38,7 @@ def executeStages(String repo="https://github.com/tensorflow/tensorflow.git/", S
             checkout(
                 [
                     $class: 'GitSCM',
-                    userRemoteConfigs: [[url: repo, credentialsId:credentialsId]],
+                    userRemoteConfigs: [[url: repo]],
                     branches: [[name: branch]]
                 ]
             )

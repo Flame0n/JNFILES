@@ -1,8 +1,0 @@
-library identifier: "JNFILES@main", retriever: modernSCM(
-  [$class: 'GitSCMSource',
-   remote: 'https://github.com/Flame0n/JNFILES.git',
-   credentialsId: 'AVK'])
-
-def parameters = [:]
-println(BRANCH_NAME)
-//forks(parameters)

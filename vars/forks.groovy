@@ -1,18 +1,25 @@
 def executeCommand(String executionType) {
-    println("Build executed")
-    sh """
-        tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/${executionType}.sh
-    """
+    try {
+        println("Build executed")
+        sh """
+            tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/${executionType}.sh
+        """
+    } catch(e) {
+        
+    }
 }
 
-def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/", String credentialsId="Token"){
+def executeStages(){
+    if (env.GIT_BRANCH && env.GIT_URL) {
+        String branch = env.GIT_BRANCH
+        String repo = env.GIT_URL
+    } else {
+        String branch="develop-upstream"
+        String repo="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/"
+    }
+
     Map stages = [:]
     List listOfStages = ["run_cpu", "run_gpu_multi", "run_gpu_single", "rocm_ci_sanity"]
-    String branch="develop-upstream"
-    if (env.GIT_BRANCH && env.GIT_URL) {
-        branch = env.GIT_BRANCH
-        repo = env.GIT_URL
-    }
     listOfStages.each() {
         stages[it] = {
             try{
@@ -29,11 +36,10 @@ def executeStages(String repo="https://github.com/ROCmSoftwarePlatform/tensorflo
                     executeCommand(it)
                 }
             } catch (e) {
-                
+                println("[ERROR] Failed te")
             } 
         }
     }
-
     parallel stages
 }
 
