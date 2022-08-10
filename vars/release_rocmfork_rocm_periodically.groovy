@@ -64,12 +64,20 @@ def call() {
 						
 						stage("Clone ROCm TF") {
 							println("[INFO] Clone ROCm TF Github tensorflowRepo")
-							checkout scm: [
-								$class: 'GitSCM',
-								userRemoteConfigs: [[url: tensorflowRepo]],
-                            	branches: [[name: tensorflowBranch]]
-								extensions: [[$class: "RelativeTargetDirectory", relativeTargetDir: "${TF_CLONE_DIR}"]],
-							]
+
+							checkout(
+								[
+									$class: 'GitSCM',
+									userRemoteConfigs: [[url: tensorflowRepo]],
+                            		branches: [[name: tensorflowBranch]]б
+									extensions: [
+										[
+											$class: "RelativeTargetDirectory",
+											relativeTargetDir: TF_CLONE_DIR
+										]
+                            		],
+								]
+							)
 						}
 
 						sh "mkdir -p ${TF_ARTIFACTS_DIR}"
