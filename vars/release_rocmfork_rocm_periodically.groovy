@@ -37,7 +37,9 @@ def call() {
 		DOCKER_RUN_OPTIONS += "-e IS_NIGHTLY=1 \\"
 	}
 
-	if (tensorflowRepo == 'https://github.com/tensorflow/tensorflow') {
+	println("[DEBUG] ${tensorflowRepo} ${tensorflowBranch}")
+
+	if (tensorflowBranch == 'master') {
 		DOCKER_IMAGES = ['rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.0.0-multipython']
 	} else if (tensorflowBranch == 'r2.8-rocm-enhanced' || tensorflowBranch == 'develop-upstream') {
 		DOCKER_IMAGES << 'rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.1.0-multipython'
@@ -47,6 +49,7 @@ def call() {
 
 	def stages = [:]
 
+	println("[DEBUG] ${DOCKER_IMAGES}")
 	DOCKER_IMAGES.each() {
 		stage = it.split('/')
 		stage = stage[stage.size() - 2]
