@@ -66,8 +66,8 @@ def call() {
 							println("[INFO] Clone ROCm TF Github tensorflowRepo")
 							checkout scm: [
 								$class: 'GitSCM',
-								userRemoteConfigs: [[url: "${tensorflowRepo}"]],
-								tensoflowBranches: [[name: "*/${tensoflowBranch}"]],
+								userRemoteConfigs: [[url: tensorflowRepo]],
+                            	branches: [[name: tensorflowBranch]]
 								extensions: [[$class: "RelativeTargetDirectory", relativeTargetDir: "${TF_CLONE_DIR}"]],
 							]
 						}
