@@ -51,5 +51,6 @@ def call(Map parameters) {
         currentBuild.description = "<b>Success</b><br/>"
     } catch(e) {
         currentBuild.result = "FAILURE"
+        urrentBuild.description = "<b>FAILURE</b><br/>"
     }
 }

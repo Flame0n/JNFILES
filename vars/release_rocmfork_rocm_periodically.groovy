@@ -50,10 +50,10 @@ def call() {
 	def stages = [:]
 
 	println("[DEBUG] ${DOCKER_IMAGES}")
+
 	DOCKER_IMAGES.each() {
-		stage = it.split('/')
-		stage = stage[stage.size() - 2]
-		stages[stage] = {
+
+		stages[it] = {
 			node("rocm") {
 				try {
 					timeout(time: 12, unit: 'HOURS') {
