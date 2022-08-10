@@ -69,7 +69,7 @@ def call() {
 								[
 									$class: 'GitSCM',
 									userRemoteConfigs: [[url: tensorflowRepo]],
-                            		branches: [[name: tensorflowBranch]]б
+                            		branches: [[name: tensorflowBranch]]
 									extensions: [
 										[
 											$class: "RelativeTargetDirectory",
