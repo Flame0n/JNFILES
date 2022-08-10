@@ -10,7 +10,8 @@ def call() {
 	--cap-add=SYS_PTRACE \
 	--security-opt seccomp=unconfined \
 	--device=/dev/kfd\
-	--device=/dev/dri \ 
+	--device=/dev/dri \
+
 	"
 
 	if (env.JOB_NAME.contains("master")){
@@ -32,7 +33,7 @@ def call() {
 	}
 
 	if (BRANCH == "master" || BRANCH == "develop-upstream") {
-		DOCKER_RUN_OPTIONS += "\n-e IS_NIGHTLY=1 \\"
+		DOCKER_RUN_OPTIONS += "-e IS_NIGHTLY=1 \\"
 	}
 
 	if (REPO == 'https://github.com/tensorflow/tensorflow') {
