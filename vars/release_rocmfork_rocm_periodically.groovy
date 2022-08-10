@@ -14,32 +14,32 @@ def call() {
 	"
 
 	if (env.JOB_NAME.contains("master")){
-		def projectRepo = 'https://github.com/tensorflow/tensorflow'
-		def projectBranch = 'master'
+		def tensoflowRepo = 'https://github.com/tensorflow/tensorflow'
+		def tensoflowBranch = 'master'
 	} else {
-		def projectRepo = 'https://github.com/ROCmSoftwarePlatform/tensorflow-upstream'
+		def tensoflowRepo = 'https://github.com/ROCmSoftwarePlatform/tensorflow-upstream'
 		if (env.JOB_NAME.contains("r2.8-rocm-enhanced")) {
-			def projectBranch = 'r2.8-rocm-enhanced'
+			def tensoflowBranch = 'r2.8-rocm-enhanced'
 		} else if (env.JOB_NAME.contains('r2.9-rocm-enhanced')) {
-			def projectBranch = 'r2.9-rocm-enhanced'
+			def tensoflowBranch = 'r2.9-rocm-enhanced'
 		} else if (env.JOB_NAME.contains('r2.10-rocm-enhanced')) {
-			def projectBranch = 'r2.10-rocm-enhanced'
+			def tensoflowBranch = 'r2.10-rocm-enhanced'
 		} else if (env.JOB_NAME.contains('develop-upstream')) {
-			def projectBranch = 'develop-upstream'
+			def tensoflowBranch = 'develop-upstream'
 		} else {
-			error "Failed via parsing project projectRepository and projectBranch"
+			error "Failed via parsing project tensoflowRepository and tensoflowBranch"
 		}
 	}
 
-	if (projectBranch == "master" || projectBranch == "develop-upstream") {
+	if (tensoflowBranch == "master" || tensoflowBranch == "develop-upstream") {
 		DOCKER_RUN_OPTIONS += "-e IS_NIGHTLY=1 \\"
 	}
 
-	if (projectRepo == 'https://github.com/tensorflow/tensorflow') {
+	if (tensoflowRepo == 'https://github.com/tensorflow/tensorflow') {
 		DOCKER_IMAGES = ['rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.0.0-multipython']
-	} else if (projectBranch == 'r2.8-rocm-enhanced' || projectBranch == 'develop-upstream') {
+	} else if (tensoflowBranch == 'r2.8-rocm-enhanced' || tensoflowBranch == 'develop-upstream') {
 		DOCKER_IMAGES << 'rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.1.0-multipython'
-	} else if (projectBranch == 'r2.9-rocm-enhanced' || projectBranch == 'r2.10-rocm-enhanced') {
+	} else if (tensoflowBranch == 'r2.9-rocm-enhanced' || tensoflowBranch == 'r2.10-rocm-enhanced') {
 		DOCKER_IMAGES << 'rocm/tensorflow-autobuilds:ubuntu18.04-rocm5.1.3-multipython'
 	}
 
@@ -58,11 +58,11 @@ def call() {
 						}
 						
 						stage("Clone ROCm TF") {
-							println("[INFO] Clone ROCm TF Github projectRepo")
+							println("[INFO] Clone ROCm TF Github tensoflowRepo")
 							checkout scm: [
 								$class: 'GitSCM',
-								userRemoteConfigs: [[url: "${projectRepo}"]],
-								projectBranches: [[name: "*/${projectBranch}"]],
+								userRemoteConfigs: [[url: "${tensoflowRepo}"]],
+								tensoflowBranches: [[name: "*/${tensoflowBranch}"]],
 								extensions: [[$class: "RelativeTargetDirectory", relativeTargetDir: "${TF_CLONE_DIR}"]],
 							]
 						}
