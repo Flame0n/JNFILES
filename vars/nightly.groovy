@@ -7,10 +7,10 @@ def setGlobalConfig() {
     }
 }
 
-def executeCommand(String executionType) {
+def executeCommand(String stage, Boolean rocmPath) {
     try {
         println("Run unit tests")
-        if (ROCM_PATH) {
+        if (rocmPath) {
             sh """
                 tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/${executionType}.sh \$ROCM_PATH
             """
@@ -51,7 +51,7 @@ def executeStages(Map options){
                         setGlobalConfig()
                         executePreBuild(key, variable)
                     }
-                    executeCommand(key)
+                    executeCommand(key, options.rocmPath)
                 }
             } catch (e) {
                 currentBuild.result = "FAILURE"
