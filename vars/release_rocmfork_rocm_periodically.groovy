@@ -48,7 +48,6 @@ def call() {
     def stages = [:]
 
     DOCKER_IMAGES.each() {
-
         stages[it] = {
             node("rocm") {
                 try {

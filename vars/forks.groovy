@@ -23,7 +23,10 @@ def executeStages(){
     listOfStages.each() {
         stages[it] = {
             try{
-                def label = it == "run_gpu_multi" ? "rocm&&multi_gpu" : "rocm"
+                def label = "rocm"
+                if (branch.contains("r2.9" && "run_gpu_multi")){
+                    label += "&&multi_gpu"
+                } 
                 node(label){
                     restartDocker()
                     checkout(
