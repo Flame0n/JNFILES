@@ -21,6 +21,20 @@ def call() {
     timeout(time: 10, unit: 'HOURS') {
         node("tensorflow-ci"){
             try {
+                if (env.GIT_BRANCH && env.GIT_URL) {
+                    String branch = env.GIT_BRANCH
+                    String repo = env.GIT_URL
+                } else {
+                    String branch="develop-upstream"
+                    String repo="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/"
+                }
+                checkout(
+                    [
+                        $class: 'GitSCM',
+                        userRemoteConfigs: [[url: repo]],
+                        branches: [[name: branch]]
+                    ]
+                )
                 githubNotify status: "PENDING", context: "AMD ROCm -- Community CI Build ", description: "build started", credentialsId: "46665a52-3ecc-40e8-8435-cc65202ecae5", account: "tensorflow", repo: "tensorflow"
                 buildjob()
                 githubNotify status: "SUCCESS", context: "AMD ROCm -- Community CI Build ", description: "rocm CI build successful", credentialsId: "46665a52-3ecc-40e8-8435-cc65202ecae5", account: "tensorflow", repo: "tensorflow"
