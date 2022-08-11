@@ -9,7 +9,7 @@ def setGlobalConfig() {
 
 def executeCommand(String executionType, Boolean rocmPath) {
     try {
-        println("Run unit tests")
+        println("[INFO] Run unit tests")
         if (rocmPath) {
             sh """
                 tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/${executionType}.sh \$ROCM_PATH
@@ -20,17 +20,22 @@ def executeCommand(String executionType, Boolean rocmPath) {
             """
         }
     } catch(e) {
+        println(e.toString())
+        println(e.getMessage())
         currentBuild.result = "FAILURE"
         throw e
     }
 }
 
 def executePreBuild(String stage, String script) {
+    println("[INFO] Execute prebuild scripts")
     try {
         sh script
     } catch(e) {
-        throw new Exception("Failed on ${stage} pre script execution")
+        println(e.toString())
+        println(e.getMessage())
         currentBuild.result = "FAILURE"
+        throw e
     }
 }
 
@@ -49,7 +54,7 @@ def executeStages(Map options){
                             branches: [[name: options.branch]]
                         ]
                     )
-                    stage("Execute pre scripts"){
+                    stage("Execute prebuild scripts"){
                         if (variable) {
                             setGlobalConfig()
                             executePreBuild(key, variable)
@@ -60,9 +65,12 @@ def executeStages(Map options){
                     }
                 }
             } catch (e) {
+                println(e.toString())
+                println(e.getMessage())
                 currentBuild.result = "FAILURE"
                 println("[ERROR] Failed on stage ${key}")
-                throw new Exception("OW")
+                currentBuild.description += "<b style='color: #641e16'>Failure reason:</b> <span style='color: #b03a2e'>Failed on ${key}</span><br/>"
+                throw e
             } 
         }
     }
@@ -72,13 +80,17 @@ def executeStages(Map options){
 def call(Map options) {
     try {
         executeStages(options)
-        currentBuild.description = "<b>Success</b><br/>"
+    } catch (FlowInterruptedException e) {
+        currentBuild.description = "<b style='color: #641e16'>Failure reason:</b> <span style='color: #b03a2e'>Build was aborted</span><br/>"
+        currentBuild.result = "ABORTED"
+        throw e
     } catch(e) {
         currentBuild.result = "FAILURE"
         currentBuild.description = "<b>FAILURE</b><br/>"
     } finally {
         if (currentBuild.result != "FAILURE"){
             currentBuild.result = "SUCCESS"
+            currentBuild.description = "<b>Success</b><br/>"
         }
     }
 }
