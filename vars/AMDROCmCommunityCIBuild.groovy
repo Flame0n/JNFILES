@@ -1,3 +1,5 @@
+import groovy.transform.Field
+
 @Field final String SCRIPT = '''#!/bin/bash
 sed -i 's|ROCM_EXTRA_PARAMS="--device=/dev/kfd --device=/dev/dri --group-add video |ROCM_EXTRA_PARAMS="|g' tensorflow/tools/ci_build/ci_build.sh
 touch build_rocm_python3
@@ -24,9 +26,6 @@ def call() {
                 if (env.GIT_BRANCH && env.GIT_URL) {
                     String branch = env.GIT_BRANCH
                     String repo = env.GIT_URL
-                } else {
-                    String branch="develop-upstream"
-                    String repo="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/"
                 }
                 checkout(
                     [
@@ -35,6 +34,8 @@ def call() {
                         branches: [[name: branch]]
                     ]
                 )
+                githubNotify status: "PENDING", context: "AMD ROCm -- Community CI Build ", description: "build started", credentialsId: "46665a52-3ecc-40e8-8435-cc65202ecae5", account: "tensorflow", repo: "tensorflow"
+
                 githubNotify status: "PENDING", context: "AMD ROCm -- Community CI Build ", description: "build started", credentialsId: "46665a52-3ecc-40e8-8435-cc65202ecae5", account: "tensorflow", repo: "tensorflow"
                 buildjob()
                 githubNotify status: "SUCCESS", context: "AMD ROCm -- Community CI Build ", description: "rocm CI build successful", credentialsId: "46665a52-3ecc-40e8-8435-cc65202ecae5", account: "tensorflow", repo: "tensorflow"
