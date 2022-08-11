@@ -49,12 +49,13 @@ def executeStages(Map options){
                             branches: [[name: options.branch]]
                         ]
                     )
-                    if (variable) {
-                        setGlobalConfig()
-                        stage("Execute pre scripts"){
+                    stage("Execute pre scripts"){
+                        if (variable) {
+                            setGlobalConfig()
                             executePreBuild(key, variable)
                         }
                     }
+                    
                     stage("Execute unit tests"){
                         executeCommand(key, options.rocmPath)
                     }
