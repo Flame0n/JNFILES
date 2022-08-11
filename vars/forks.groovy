@@ -5,7 +5,7 @@ def executeCommand(String executionType) {
             tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/${executionType}.sh
         """
     } catch(e) {
-        
+        throw new Exception("Failed on ${executionType} stage")
     }
 }
 
@@ -51,6 +51,6 @@ def call(Map parameters) {
         currentBuild.description = "<b>Success</b><br/>"
     } catch(e) {
         currentBuild.result = "FAILURE"
-        urrentBuild.description = "<b>FAILURE</b><br/>"
+        currentBuild.description = "<b>FAILURE</b><br/>"
     }
 }
