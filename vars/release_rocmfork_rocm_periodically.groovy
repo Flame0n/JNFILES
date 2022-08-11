@@ -83,7 +83,7 @@ def call() {
                                         ${it} \
                                         ./tensorflow/tools/ci_build/linux/rocm/rocm_py37_pip.sh"
 
-                                sh "cp pip_test/whl/* ${TF_ARTIFACTS_DIR}/"
+                                sh     "cp pip_test/whl/* ../${TF_ARTIFACTS_DIR}/"
                             }
 
                             stage("Python 3.8 whl") {
@@ -95,7 +95,7 @@ def call() {
                                         ${it} \
                                         ./tensorflow/tools/ci_build/linux/rocm/rocm_py38_pip.sh"
 
-                                sh "cp pip_test/whl/* ${TF_ARTIFACTS_DIR}/"
+                                sh     "cp pip_test/whl/* ../${TF_ARTIFACTS_DIR}/"
                             }
 
                             stage("Python 3.9 whl") {
@@ -107,7 +107,7 @@ def call() {
                                         ${it} \
                                         ./tensorflow/tools/ci_build/linux/rocm/rocm_py39_pip.sh"
 
-                                sh "cp pip_test/whl/* ${TF_ARTIFACTS_DIR}/"
+                                sh     "cp pip_test/whl/* ../${TF_ARTIFACTS_DIR}/"
                             }                        
                         }
 
