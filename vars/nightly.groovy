@@ -51,13 +51,18 @@ def executeStages(Map options){
                     )
                     if (variable) {
                         setGlobalConfig()
-                        executePreBuild(key, variable)
+                        stage("Execute pre scripts"){
+                            executePreBuild(key, variable)
+                        }
                     }
-                    executeCommand(key, options.rocmPath)
+                    stage("Execute unit tests"){
+                        executeCommand(key, options.rocmPath)
+                    }
                 }
             } catch (e) {
                 currentBuild.result = "FAILURE"
                 println("[ERROR] Failed on stage ${key}")
+                throw new Exception("OW")
             } 
         }
     }
