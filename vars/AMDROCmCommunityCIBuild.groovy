@@ -27,17 +27,11 @@ def call() {
                     String branch = env.GIT_BRANCH
                     String repo = env.GIT_URL
                 }
-                checkout(
-                    [
-                        $class: 'GitSCM',
-                        userRemoteConfigs: [[url: repo]],
-                        branches: [[name: branch]]
-                    ]
-                )
+                
                 githubNotify status: "PENDING", context: "AMD ROCm -- Community CI Build ", description: "build started", credentialsId: "46665a52-3ecc-40e8-8435-cc65202ecae5", account: "Flame0n", repo: "tensorflow-upstream"
 
                 githubNotify status: "PENDING", context: "AMD ROCm -- Community CI Build ", description: "build started", credentialsId: "46665a52-3ecc-40e8-8435-cc65202ecae5", account: "Flame0n", repo: "tensorflow-upstream"
-                buildjob()
+                //buildjob()
                 githubNotify status: "SUCCESS", context: "AMD ROCm -- Community CI Build ", description: "rocm CI build successful", credentialsId: "46665a52-3ecc-40e8-8435-cc65202ecae5", account: "Flame0n", repo: "tensorflow-upstream"
             } catch (e) {
                 currentBuild.result = "FAILED"
