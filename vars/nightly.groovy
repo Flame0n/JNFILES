@@ -20,8 +20,8 @@ def executeCommand(String executionType, Boolean rocmPath) {
             """
         }
     } catch(e) {
-        throw new Exception("Failed on ${executionType} unit tests")
         currentBuild.result = "FAILURE"
+        throw e
     }
 }
 
@@ -55,7 +55,6 @@ def executeStages(Map options){
                             executePreBuild(key, variable)
                         }
                     }
-                    
                     stage("Execute unit tests"){
                         executeCommand(key, options.rocmPath)
                     }
