@@ -7,7 +7,7 @@ def setGlobalConfig() {
     }
 }
 
-def executeCommand(String stage, Boolean rocmPath) {
+def executeCommand(String executionType, Boolean rocmPath) {
     try {
         println("Run unit tests")
         if (rocmPath) {
