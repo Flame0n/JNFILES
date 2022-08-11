@@ -21,6 +21,7 @@ def executeCommand(String stage, Boolean rocmPath) {
         }
     } catch(e) {
         throw new Exception("Failed on ${executionType} unit tests")
+        currentBuild.result = "FAILURE"
     }
 }
 
@@ -29,6 +30,7 @@ def executePreBuild(String stage, String script) {
         sh script
     } catch(e) {
         throw new Exception("Failed on ${stage} pre script execution")
+        currentBuild.result = "FAILURE"
     }
 }
 
@@ -65,10 +67,13 @@ def executeStages(Map options){
 def call(Map options) {
     try {
         executeStages(options)
-        currentBuild.result = "SUCCESS"
         currentBuild.description = "<b>Success</b><br/>"
     } catch(e) {
         currentBuild.result = "FAILURE"
         currentBuild.description = "<b>FAILURE</b><br/>"
+    } finally {
+        if (currentBuild.result != "FAILURE"){
+            currentBuild.result = "SUCCESS"
+        }
     }
 }
