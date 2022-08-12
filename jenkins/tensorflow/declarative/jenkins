@@ -1,8 +1,11 @@
 
 def executeCommand(String executionType) {
+    println("he-he")
+    /*
     sh """
         tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/${executionType}.sh
     """
+    */
 }
 
 def checkoutProject(String repo, String branch){
