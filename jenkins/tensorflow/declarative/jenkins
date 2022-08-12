@@ -45,7 +45,7 @@ pipeline {
             parallel {
                 stage("cpu") {
                     agent {
-                        node { label 'rocm' }
+                        label 'rocm' 
                     }
                     steps {
                         checkoutProject(env.GIT_URL, env.GIT_BRANCH)
@@ -54,7 +54,7 @@ pipeline {
                 }
                 stage("GPU") {
                     agent {
-                        node { label 'rocm' }
+                        label 'rocm' 
                     }
                     steps {
                         checkoutProject(env.GIT_URL, env.GIT_BRANCH)
