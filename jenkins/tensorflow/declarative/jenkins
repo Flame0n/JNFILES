@@ -48,8 +48,10 @@ pipeline {
                         label 'rocm' 
                     }
                     steps {
-                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                        executeCommand("run_cpu") 
+                        script {
+                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                            executeCommand("run_cpu")
+                        }
                     }
                 }
                 stage("GPU") {
@@ -57,8 +59,10 @@ pipeline {
                         label 'rocm' 
                     }
                     steps {
-                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                        executeCommand("run_cpu") 
+                        script {
+                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                            executeCommand("run_cpu")
+                        }
                     }
                 }
             }

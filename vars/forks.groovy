@@ -1,9 +1,11 @@
 def executeCommand(String executionType) {
     try {
+        /*
         println("Build executed")
         sh """
             tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/${executionType}.sh
         """
+        */
     } catch(e) {
         throw new Exception("Failed on ${executionType} stage")
     }
