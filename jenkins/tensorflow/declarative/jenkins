@@ -32,6 +32,9 @@ pipeline {
         timestamps()
     }
     parallel {
+        agent {
+            node { label 'rocm' }
+        }
         stage("cpu") {
             node("rocm"){
                 checkoutProject(repo, branch)
