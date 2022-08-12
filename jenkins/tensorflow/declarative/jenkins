@@ -44,25 +44,7 @@ pipeline {
                         executeCommand("run_cpu") 
                     }
                 }
-                stage("cpu") {
-                    agent {
-                        node { label 'rocm' }
-                    }
-                    steps {
-                        checkoutProject(repo, branch)
-                        executeCommand("run_cpu") 
-                    }
-                }
-                stage("cpu") {
-                    agent {
-                        node { label 'rocm' }
-                    }
-                    steps {
-                        checkoutProject(repo, branch)
-                        executeCommand("run_cpu") 
-                    }
-                }
-                stage("cpu") {
+                stage("GPU") {
                     agent {
                         node { label 'rocm' }
                     }
