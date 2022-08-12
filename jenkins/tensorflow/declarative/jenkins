@@ -27,36 +27,38 @@ if (env.GIT_BRANCH && env.GIT_URL) {
 }
 
 pipeline {
+    agent {
+        node { label 'rocm' }
+    }
     options {
         timeout(time: 10, unit: 'HOURS')
         timestamps()
     }
-    parallel {
-        agent {
-            node { label 'rocm' }
-        }
-        stage("cpu") {
-            node("rocm"){
-                checkoutProject(repo, branch)
-                executeCommand("run_cpu") 
-            }
-        }
-        stage("gpu_multi") {
-            node("rocm"){
-                checkoutProject(repo, branch)
-                executeCommand("run_gpu_multi") 
-            }
-        }
-        stage("gpu_single") {
-            node("rocm"){
-                checkoutProject(repo, branch)
-                executeCommand("run_gpu_single") 
-            }
-        }
-        stage("ci_sanity") {
-            node("rocm"){
-                checkoutProject(repo, branch)
-                executeCommand("rocm_ci_sanity") 
+    stages {
+        stage('Run Tests') {
+            parallel {
+                stage("cpu") {
+                        checkoutProject(repo, branch)
+                        executeCommand("run_cpu") 
+                }
+                stage("gpu_multi") {
+
+                        checkoutProject(repo, branch)
+                        executeCommand("run_gpu_multi") 
+                    
+                }
+                stage("gpu_single") {
+
+                        checkoutProject(repo, branch)
+                        executeCommand("run_gpu_single") 
+                    
+                }
+                stage("ci_sanity") {
+
+                        checkoutProject(repo, branch)
+                        executeCommand("rocm_ci_sanity") 
+
+                }
             }
         }
     }
