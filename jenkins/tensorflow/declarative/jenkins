@@ -37,19 +37,19 @@ pipeline {
                 checkoutProject(repo, branch)
                 executeCommand("run_cpu") 
             }
-        },
+        }
         stage("gpu_multi") {
             node("rocm"){
                 checkoutProject(repo, branch)
                 executeCommand("run_gpu_multi") 
             }
-        },
+        }
         stage("gpu_single") {
             node("rocm"){
                 checkoutProject(repo, branch)
                 executeCommand("run_gpu_single") 
             }
-        },
+        }
         stage("ci_sanity") {
             node("rocm"){
                 checkoutProject(repo, branch)
