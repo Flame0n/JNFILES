@@ -48,7 +48,7 @@ pipeline {
                         node { label 'rocm' }
                     }
                     steps {
-                        checkoutProject(repo, branch)
+                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
                         executeCommand("run_cpu") 
                     }
                 }
@@ -57,7 +57,7 @@ pipeline {
                         node { label 'rocm' }
                     }
                     steps {
-                        checkoutProject(repo, branch)
+                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
                         executeCommand("run_cpu") 
                     }
                 }
