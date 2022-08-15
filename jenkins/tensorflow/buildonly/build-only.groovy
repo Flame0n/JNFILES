@@ -6,7 +6,7 @@ def executeBuild(){
 
         BUILD_SCRIPT=build_rocm_python3
 
-        cat <<_EOF_ > ./\$BUILD_SCRIPT
+        cat <<-EOF> ./\$BUILD_SCRIPT
         ""#!/bin/bash
 
         set -eux
