@@ -18,7 +18,7 @@ def call() {
     def tensorflowRepo = params.repositoryUrl
     def tensorflowBranch= params.repositoryBranch
 
-    if (tensorflowBranch== "master" || tensorflowBranch== "develop-upstream") {
+    if (tensorflowBranch != "master" && tensorflowBranch != "develop-upstream") {
         DOCKER_RUN_OPTIONS.replace("-e IS_NIGHTLY=1", "")
     }
 
