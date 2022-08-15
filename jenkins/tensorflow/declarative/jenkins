@@ -1,12 +1,4 @@
 import groovy.transform.Field
-import io.jenkins.plugins.checks.api.ChecksAction
-import io.jenkins.plugins.checks.api.ChecksAnnotation
-import io.jenkins.plugins.checks.api.ChecksConclusion
-import io.jenkins.plugins.checks.api.ChecksDetailsBuilder
-import io.jenkins.plugins.checks.api.ChecksOutput
-import io.jenkins.plugins.checks.api.ChecksPublisherFactory
-import io.jenkins.plugins.checks.api.ChecksStatus
-import io.jenkins.plugins.checks.util.CapturingChecksPublisher
 
 def executeCommand(String executionType) {
     println("he-he")
