@@ -28,7 +28,7 @@ def checkoutProject(String repo, String branch){
 
 pipeline {
     agent {
-        node { label 'build-only' }
+        node { label 'ixt-rack-125' }
     }
     options {
         timeout(time: 3, unit: 'HOURS')
