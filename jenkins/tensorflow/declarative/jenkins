@@ -45,14 +45,12 @@ pipeline {
         timestamps()
     }
     stages {
-        stage('Run Tests') {
-            stage("CPU") {
-                steps {
-                    script {
-                        echo "[DEBUG] ${env.GIT_BRANCH} ${env.GIT_URL}"
-                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                        executeCommand("run_cpu")
-                    }
+        stage("CPU") {
+            steps {
+                script {
+                    echo "[DEBUG] ${env.GIT_BRANCH} ${env.GIT_URL}"
+                    checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                    executeCommand("run_cpu")
                 }
             }
         }
