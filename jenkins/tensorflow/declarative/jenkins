@@ -34,6 +34,8 @@ if (env.GIT_BRANCH && env.GIT_URL) {
     repo = REPOSITORY
 }
 
+println(env.GIT_BRANCH, env.GIT_URL)
+
 pipeline {
     agent none
     options {
