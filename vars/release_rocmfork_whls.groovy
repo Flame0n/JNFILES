@@ -32,8 +32,8 @@ def call() {
     def stages = [:]
 
     DOCKER_IMAGES.each() {
-        def stage = it.split(":")[1].replace("-multipython","")
-        stages[stage] = {
+        def stageName = it.split(":")[1].replace("-multipython","")
+        stages[stageName] = {
             node("rocm") {
                 try {
                     timeout(time: 12, unit: 'HOURS') {
@@ -101,11 +101,7 @@ def call() {
                                 done'
                         }
                     }
-                } catch (FlowInterruptedException e) {
-                    currentBuild.description = "<b style='color: #641e16'>Failure reason:</b> <span style='color: #b03a2e'>Build was aborted</span><br/>"
-                    currentBuild.result = "ABORTED"
-                }
-                catch(e) {
+                } catch(e) {
                     println("[ERROR] FAILED on ${it} stage")
                     currentBuild.result = "FAILURE"
                 } finally {
