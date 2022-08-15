@@ -217,7 +217,7 @@ def executeStages(){
                     stage("Execute prebuild scripts"){
                         if (value) {
                             setGlobalConfig()
-                            executePreBuild(key, value)
+                            executePreBuild(value)
                         }
                     }
                     stage("Execute unit tests"){
