@@ -51,7 +51,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            echo "${env.GIT_BRANCH} ${env.GIT_URL}"
+                            echo "[DEBUG] ${env.GIT_BRANCH} ${env.GIT_URL}"
                             checkoutProject(env.GIT_URL, env.GIT_BRANCH)
                             executeCommand("run_cpu")
                         }
@@ -63,7 +63,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            echo "${env.GIT_BRANCH} ${env.GIT_URL}"
+                            echo "[DEBUG] ${env.GIT_BRANCH} ${env.GIT_URL}"
                             checkoutProject(env.GIT_URL, env.GIT_BRANCH)
                             executeCommand("run_cpu")
                         }
