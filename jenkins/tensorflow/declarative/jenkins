@@ -30,9 +30,6 @@ pipeline {
                     }
                     steps {
                         script {
-                            withChecks("CPU") {
-                                throw e
-                            }
                             checkoutProject(env.GIT_URL, env.GIT_BRANCH)
                             executeCommand("run_cpu")
                         }
@@ -58,9 +55,6 @@ pipeline {
                     }
                     steps {
                         script {
-                            withChecks("GPU") {
-                                throw e
-                            }
                             checkoutProject(env.GIT_URL, env.GIT_BRANCH)
                             executeCommand("run_gpu_single")
                         }
