@@ -233,7 +233,7 @@ def executeStages(){
     parallel stages
 }
 
-def call(Map options) {
+def call() {
     try {
         executeStages()
     } catch (FlowInterruptedException e) {
