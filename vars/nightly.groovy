@@ -181,7 +181,7 @@ def executePreBuild(String script) {
 }
 
 def executeStages(){
-    switch(params.branch) {
+    switch(params.repositoryBranch) {
         case "develop-upstream":
             def config = NIGHTLY_ROCMFORK_DEVELOP_UPSTREAM
             break
@@ -208,8 +208,8 @@ def executeStages(){
                     checkout(
                         [
                             $class: 'GitSCM',
-                            userRemoteConfigs: [[url: params.repo]],
-                            branches: [[name: params.branch]]
+                            userRemoteConfigs: [[url: params.repositoryUrl]],
+                            branches: [[name: params.repositoryBranch]]
                         ]
                     )
                     stage("Execute prebuild scripts"){
