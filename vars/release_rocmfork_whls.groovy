@@ -4,7 +4,7 @@ def call() {
     def TF_CLONE_DIR = 'tensorflow'
     def TF_ARTIFACTS_DIR = 'artifactory'
     def DOCKER_IMAGES = ['rocm/tensorflow-autobuilds:ubuntu20.04-rocm5.2.0-multipython']
-    def DOCKER_RUN_OPTIONS = "\
+    def DOCKER_RUN_OPTIONS_NIGHTLY = "\
     --network=host \
     --ipc=host \
     --shm-size 16G \
@@ -15,11 +15,24 @@ def call() {
     --device=/dev/dri \
     -e IS_NIGHTLY=1 \
     "
+    def DOCKER_RUN_OPTIONS = "\
+    --network=host \
+    --ipc=host \
+    --shm-size 16G \
+    --group-add video \
+    --cap-add=SYS_PTRACE \
+    --security-opt seccomp=unconfined \
+    --device=/dev/kfd \
+    --device=/dev/dri \
+    "
+
     def tensorflowRepo = params.repositoryUrl
     def tensorflowBranch= params.repositoryBranch
-
-    if (tensorflowBranch != "master" && tensorflowBranch != "develop-upstream") {
-        DOCKER_RUN_OPTIONS.replace("-e IS_NIGHTLY=1", "")
+    def dockerOptions = ""
+    if (tensorflowBranch == "master" && tensorflowBranch == "develop-upstream") {
+        dockerOptions = DOCKER_RUN_OPTIONS_NIGHTLY
+    } else {
+        dockerOptions = DOCKER_RUN_OPTIONS
     }
 
     if (tensorflowBranch == 'master') {
@@ -58,7 +71,7 @@ def call() {
                             stage("Python 3.7 whl") {
                                 println("[INFO] Build the Python 3.7 whl")
                                 sh "docker run \
-                                    ${DOCKER_RUN_OPTIONS} \
+                                    ${dockerOptions} \
                                     -v ${WORKSPACE}/${TF_CLONE_DIR}:/tensorflow \
                                     -w /tensorflow \
                                     ${it} \
@@ -70,7 +83,7 @@ def call() {
                             stage("Python 3.8 whl") {
                                 println("[INFO] Build the Python 3.8 whl")
                                 sh "docker run \
-                                    ${DOCKER_RUN_OPTIONS} \
+                                    ${dockerOptions} \
                                     -v ${WORKSPACE}/${TF_CLONE_DIR}:/tensorflow \
                                     -w /tensorflow \
                                     ${it} \
@@ -82,7 +95,7 @@ def call() {
                             stage("Python 3.9 whl") {
                                 println("[INFO] Build the Python 3.9 whl")
                                 sh "docker run \
-                                    ${DOCKER_RUN_OPTIONS} \
+                                    ${dockerOptions} \
                                     -v ${WORKSPACE}/${TF_CLONE_DIR}:/tensorflow \
                                     -w /tensorflow \
                                     ${it} \
