@@ -182,18 +182,19 @@ def executePreBuild(String script) {
 }
 
 def executeStages(){
+    def executionConfig
     switch(params.repositoryBranch) {
         case "develop-upstream":
-            def executionConfig = NIGHTLY_ROCMFORK_DEVELOP_UPSTREAM
+            executionConfig = NIGHTLY_ROCMFORK_DEVELOP_UPSTREAM
             break
         case "master":
-            def executionConfig = NIGHTLY_UPSTREAM_MASTER
+            executionConfig = NIGHTLY_UPSTREAM_MASTER
             break
         case "r2.9":
-            def executionConfig = NIGHTLY_UPSTREAM_R29
+            executionConfig = NIGHTLY_UPSTREAM_R29
             break
         default:
-            def executionConfig = DEFAULT_CONFIG
+            executionConfig = DEFAULT_CONFIG
             break 
     }
 
