@@ -32,7 +32,7 @@ def call() {
     def stages = [:]
 
     DOCKER_IMAGES.each() {
-        def stage = it.split(":")[-1].replace("-multipython","")
+        def stage = it.split(":")[1].replace("-multipython","")
         stages[stage] = {
             node("rocm") {
                 try {
