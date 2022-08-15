@@ -1,5 +1,7 @@
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
 
+
+
 def setGlobalConfig() {
     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'builder-amd', usernamevalue: 'email', passwordvalue: 'name']]) {
         sh """

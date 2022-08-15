@@ -13,13 +13,13 @@ def call() {
     --security-opt seccomp=unconfined \
     --device=/dev/kfd\
     --device=/dev/dri \
-    -e IS_NIGHTLY=1
+    -e IS_NIGHTLY=1 \
     "
     def tensorflowRepo = params.repositoryUrl
     def tensorflowBranch= params.repositoryBranch
 
     if (tensorflowBranch== "master" || tensorflowBranch== "develop-upstream") {
-        DOCKER_RUN_OPTIONS.replace("-e IS_NIGHTLY=1", "")
+        DOCKER_RUN_OPTIONS.replace("-e IS_NIGHTLY=1")
     }
 
     if (tensorflowBranch == 'master') {
