@@ -71,8 +71,6 @@ def executeStages(Map options){
                 println(e.getMessage())
                 currentBuild.result = "FAILURE"
                 println("[ERROR] Failed on stage ${key}")
-                currentBuild.description += "<b style='color: #641e16'>Failure reason:</b> <span style='color: #b03a2e'>Failed on ${key}</span><br/>"
-                throw e
             } 
         }
     }
