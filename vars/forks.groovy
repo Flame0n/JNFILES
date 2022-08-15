@@ -49,7 +49,7 @@ def executeStages(){
     parallel stages
 }
 
-def call(Map parameters) {
+def call() {
     try {
         executeStages()
         currentBuild.result = "SUCCESS"

@@ -4,6 +4,16 @@ def executeCommand(String executionType) {
     """
 }
 
+def restartDocker(){
+    sh """
+        systemctl status docker | grep 'Active:'
+        sudo /usr/bin/pkill -f docker
+        sudo /bin/systemctl restart docker
+        docker system prune -a -f
+        systemctl status docker | grep 'Active:'
+    """
+}
+
 def checkoutProject(String repo, String branch){
     checkout(
         [
@@ -23,6 +33,11 @@ pipeline {
         timestamps()
     }
     stages {
+        stage('Restart docker service') {   
+            steps {
+                restartDocker()
+            }
+        }
         stage('Clone repository') {   
             steps {
                 checkoutProject(env.GIT_URL, env.GIT_BRANCH)
@@ -30,20 +45,11 @@ pipeline {
         }
         stage('Tests execution') {   
             steps {
-                executeCommand(params.executionType)
+                executeCommand("run_gpu_single")
             }
         }
     }
     post {
-        success {
-            print "SUCCESS"
-        }
-        failure {
-            print "FAILURE"
-        }
-        unstable {
-            print "UNSTABLE"
-        }
         cleanup {
             cleanWs()
         }
