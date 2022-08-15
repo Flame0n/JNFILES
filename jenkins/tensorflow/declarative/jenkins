@@ -67,8 +67,6 @@ pipeline {
         }
         cleanup {
             cleanWs()
-            sh "docker stop ${CONTAINER_NAME} || true"
-            sh "docker rm -v ${CONTAINER_NAME} || true"
         }
     }
 }
