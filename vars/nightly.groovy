@@ -181,7 +181,7 @@ def executePreBuild(String script) {
 }
 
 def executeStages(){
-    switch(options.branch) {
+    switch(params.branch) {
         case "develop-upstream":
             def config = NIGHTLY_ROCMFORK_DEVELOP_UPSTREAM
             break
@@ -197,7 +197,7 @@ def executeStages(){
     }
 
     Map stages = [:]
-    Map stagesMap = ["run_gpu_multi": config.preScriptMulti, "run_gpu_single": options.preScriptSingle]
+    Map stagesMap = ["run_gpu_multi": config.preScriptMulti, "run_gpu_single": config.preScriptSingle]
     stagesMap.each() { key, value ->
         def stageName = key == "run_gpu_multi" ? "Ubuntu-GPU-multi" : "Ubuntu-GPU-single"
         stages[stageName] = {
@@ -208,8 +208,8 @@ def executeStages(){
                     checkout(
                         [
                             $class: 'GitSCM',
-                            userRemoteConfigs: [[url: options.repo]],
-                            branches: [[name: options.branch]]
+                            userRemoteConfigs: [[url: params.repo]],
+                            branches: [[name: params.branch]]
                         ]
                     )
                     stage("Execute prebuild scripts"){
@@ -219,7 +219,7 @@ def executeStages(){
                         }
                     }
                     stage("Execute unit tests"){
-                        executeCommand(key, options.rocmPath ?: false)
+                        executeCommand(key, config.rocmPath ?: false)
                     }
                 }
             } catch (e) {
