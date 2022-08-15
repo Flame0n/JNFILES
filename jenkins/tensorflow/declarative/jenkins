@@ -1,8 +1,8 @@
 import groovy.transform.Field
 
 // Use this fields for hardcoded repo and branch
-@Field final String REPOSITORY = ''
-@Field final String BRANCH = ''
+@Field final String REPOSITORY = 'https://github.com/Flame0n/tensor.git'
+@Field final String BRANCH = 'main'
 
 def executeCommand(String executionType) {
     println("he-he")
@@ -34,7 +34,7 @@ if (env.GIT_BRANCH && env.GIT_URL) {
     repo = REPOSITORY
 }
 
-echo "${env.GIT_BRANCH} ${env.GIT_URL}"
+
 
 pipeline {
     agent none
@@ -51,6 +51,7 @@ pipeline {
                     }
                     steps {
                         script {
+                            echo "${env.GIT_BRANCH} ${env.GIT_URL}"
                             checkoutProject(env.GIT_URL, env.GIT_BRANCH)
                             executeCommand("run_cpu")
                         }
@@ -62,6 +63,7 @@ pipeline {
                     }
                     steps {
                         script {
+                            echo "${env.GIT_BRANCH} ${env.GIT_URL}"
                             checkoutProject(env.GIT_URL, env.GIT_BRANCH)
                             executeCommand("run_cpu")
                         }
