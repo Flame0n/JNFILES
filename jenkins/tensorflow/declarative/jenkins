@@ -43,9 +43,9 @@ pipeline {
     stages {
         stage('Run Tests') {
             parallel {
-                stage("cpu") {
+                stage("CPU") {
                     agent {
-                        label 'rocm' 
+                        node { label 'rocm' }
                     }
                     steps {
                         script {
@@ -56,7 +56,7 @@ pipeline {
                 }
                 stage("GPU") {
                     agent {
-                        label 'rocm' 
+                        node { label 'rocm' }
                     }
                     steps {
                         script {
