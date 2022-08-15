@@ -1,3 +1,5 @@
+import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
+
 def call() {
     def TF_CLONE_DIR = 'tensorflow'
     def TF_ARTIFACTS_DIR = 'artifactory'
