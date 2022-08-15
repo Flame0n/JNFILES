@@ -33,62 +33,64 @@ pipeline {
         timestamps()
     }
     stages {
-        parallel {
-            stage("Ubuntu-CPU") {
-                agent {
-                    node { label 'rocm' }
-                }
-                steps {
-                    script {
-                        cleanWs()
-                        restartDocker()
-                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                        executeCommand("run_cpu")
+        stage("Execute tests") {
+            parallel {
+                stage("Ubuntu-CPU") {
+                    agent {
+                        node { label 'rocm' }
+                    }
+                    steps {
+                        script {
+                            cleanWs()
+                            restartDocker()
+                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                            executeCommand("run_cpu")
+                        }
+                    }
+                    post {
+                        cleanup {
+                            cleanWs()
+                        }
                     }
                 }
-                post {
-                    cleanup {
-                        cleanWs()
+                stage("Ubuntu-GPU-single") {
+                    agent {
+                        node { label 'rocm' }
                     }
-                }
-            }
-            stage("Ubuntu-GPU-single") {
-                agent {
-                    node { label 'rocm' }
-                }
-                steps {
-                    script {
-                        cleanWs()
-                        restartDocker()
-                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                        executeCommand("run_gpu_single")
+                    steps {
+                        script {
+                            cleanWs()
+                            restartDocker()
+                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                            executeCommand("run_gpu_single")
+                        }
                     }
-                }
 
-            }
-            stage("Ubuntu-GPU-multi") {
-                agent {
-                    node { label 'rocm' }
                 }
-                steps {
-                    script {
-                        cleanWs()
-                        restartDocker()
-                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                        executeCommand("run_gpu_multi")
+                stage("Ubuntu-GPU-multi") {
+                    agent {
+                        node { label 'rocm' }
+                    }
+                    steps {
+                        script {
+                            cleanWs()
+                            restartDocker()
+                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                            executeCommand("run_gpu_multi")
+                        }
                     }
                 }
-            }
-            stage("Ubuntu-sanity") {
-                agent {
-                    node { label 'rocm' }
-                }
-                steps {
-                    script {
-                        cleanWs()
-                        restartDocker()
-                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                        executeCommand("rocm_ci_sanity")
+                stage("Ubuntu-sanity") {
+                    agent {
+                        node { label 'rocm' }
+                    }
+                    steps {
+                        script {
+                            cleanWs()
+                            restartDocker()
+                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                            executeCommand("rocm_ci_sanity")
+                        }
                     }
                 }
             }
