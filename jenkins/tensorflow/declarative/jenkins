@@ -1,5 +1,3 @@
-import groovy.transform.Field
-
 def executeCommand(String executionType) {
     println("he-he")
     sh """
@@ -32,17 +30,51 @@ pipeline {
                     }
                     steps {
                         script {
-                            //withChecks('CPU'){
-                                checkoutProject(env.GIT_BRANCH, env.GIT_URL)
-                                executeCommand("run_cpu")
-                            //}
+                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                            executeCommand("run_cpu")
                         }
                     }
-
+                    post {
+                        success {
+                            print "SUCCESS"
+                        }
+                        failure {
+                            print "FAILURE"
+                        }
+                        unstable {
+                            print "UNSTABLE"
+                        }
+                        cleanup {
+                            cleanWs()
+                        }
+                    }
                 }
-
+                stage("GPU") {
+                    agent {
+                        node { label 'rocm' }
+                    }
+                    steps {
+                        script {
+                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                            executeCommand("run_cpu")
+                        }
+                    }
+                    post {
+                        success {
+                            print "SUCCESS"
+                        }
+                        failure {
+                            print "FAILURE"
+                        }
+                        unstable {
+                            print "UNSTABLE"
+                        }
+                        cleanup {
+                            cleanWs()
+                        }
+                    }
+                }
             }
         }
     }
-    
 }
