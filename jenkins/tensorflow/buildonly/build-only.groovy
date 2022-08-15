@@ -4,11 +4,9 @@ def executeBuild(){
         # Build-only mod:  remove docker's use of kfd and dri devices
         sed -i 's|ROCM_EXTRA_PARAMS="--device=/dev/kfd --device=/dev/dri --group-add video |ROCM_EXTRA_PARAMS="|g' tensorflow/tools/ci_build/ci_build.sh
 
-
         BUILD_SCRIPT=build_rocm_python3
 
-
-        cat <<EOF > \$BUILD_SCRIPT
+        cat <<EOF > ./\$BUILD_SCRIPT
     """
     sh """#!/bin/bash
 
