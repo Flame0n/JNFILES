@@ -1,8 +1,9 @@
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
+import groovy.transform.Field
 
-def DEFAULT_CONFIG = [rocmPath: false]
+@Field final Map DEFAULT_CONFIG = [rocmPath: false]
 
-def NIGHTLY_ROCMFORK_DEVELOP_UPSTREAM = [
+@Field final Map  NIGHTLY_ROCMFORK_DEVELOP_UPSTREAM = [
     rocmPath: true,
     preScriptMulti : """
         # Enable multi-gpu tests
@@ -13,7 +14,7 @@ def NIGHTLY_ROCMFORK_DEVELOP_UPSTREAM = [
     """
 ]
 
-def NIGHTLY_UPSTREAM_R29 = [
+@Field final Map NIGHTLY_UPSTREAM_R29 = [
     rocmPath: false,
     preScriptMulti : """
         git remote add rocm http://github.com/ROCmSoftwarePlatform/tensorflow-upstream
@@ -49,7 +50,7 @@ def NIGHTLY_UPSTREAM_R29 = [
     """
 ]
 
-def NIGHTLY_UPSTREAM_MASTER = [
+@Field final Map NIGHTLY_UPSTREAM_MASTER = [
     rocmPath: true,
     preScriptMulti : """
         git remote add rocm http://github.com/ROCmSoftwarePlatform/tensorflow-upstream
