@@ -33,18 +33,10 @@ pipeline {
         timestamps()
     }
     stages {
-        stage('Restart docker service') {   
+        stage('Ubuntu-CPU') {   
             steps {
                 restartDocker()
-            }
-        }
-        stage('Clone repository') {   
-            steps {
                 checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-            }
-        }
-        stage('Tests execution') {   
-            steps {
                 executeCommand("run_cpu")
             }
         }
