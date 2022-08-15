@@ -37,36 +37,21 @@ if (env.GIT_BRANCH && env.GIT_URL) {
 
 
 pipeline {
-    agent none
+    agent {
+        node { label 'rocm' }
+    }
     options {
         timeout(time: 10, unit: 'HOURS')
         timestamps()
     }
     stages {
         stage('Run Tests') {
-            parallel {
-                stage("CPU") {
-                    agent {
-                        node { label 'rocm' }
-                    }
-                    steps {
-                        script {
-                            echo "[DEBUG] ${env.GIT_BRANCH} ${env.GIT_URL}"
-                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                            executeCommand("run_cpu")
-                        }
-                    }
-                }
-                stage("GPU") {
-                    agent {
-                        node { label 'rocm' }
-                    }
-                    steps {
-                        script {
-                            echo "[DEBUG] ${env.GIT_BRANCH} ${env.GIT_URL}"
-                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                            executeCommand("run_cpu")
-                        }
+            stage("CPU") {
+                steps {
+                    script {
+                        echo "[DEBUG] ${env.GIT_BRANCH} ${env.GIT_URL}"
+                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                        executeCommand("run_cpu")
                     }
                 }
             }
