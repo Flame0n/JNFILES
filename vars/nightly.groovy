@@ -142,7 +142,7 @@ import groovy.transform.Field
 ]
 
 def setGlobalConfig() {
-    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'builder-amd', usernamevalue: 'email', passwordvalue: 'name']]) {
+    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'builder-amd', usernameVariable: 'email', passwordVariable: 'name']]) {
         sh """
             git config user.email $email
             git config user.name $name
