@@ -121,8 +121,12 @@ pipeline {
         }
     }
     post {
+        always{
+            archiveArtifacts artifacts: "*.whls", fingerprint: true
+        }
         cleanup {
             cleanWs()
         }
     }
 }
+
