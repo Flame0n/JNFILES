@@ -1,16 +1,18 @@
 import groovy.transform.Field
-
-// Use this fields for hardcoded repo and branch
-@Field final String REPOSITORY = 'https://github.com/Flame0n/tensor.git'
-@Field final String BRANCH = 'main'
+import io.jenkins.plugins.checks.api.ChecksAction
+import io.jenkins.plugins.checks.api.ChecksAnnotation
+import io.jenkins.plugins.checks.api.ChecksConclusion
+import io.jenkins.plugins.checks.api.ChecksDetails
+import io.jenkins.plugins.checks.api.ChecksOutput
+import io.jenkins.plugins.checks.api.ChecksPublisherFactory
+import io.jenkins.plugins.checks.api.ChecksStatus
+import io.jenkins.plugins.checks.util.CapturingChecksPublisher
 
 def executeCommand(String executionType) {
     println("he-he")
-    /*
     sh """
         tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/${executionType}.sh
     """
-    */
 }
 
 def checkoutProject(String repo, String branch){
@@ -23,16 +25,17 @@ def checkoutProject(String repo, String branch){
     )
 }
 
-String branch = ''
-String repo = ''
+ChecksDetails details = new ChecksDetailsBuilder()
+        .withName("Jenkins CI-he-he")
+        .withStatus(ChecksStatus.COMPLETED)
+        .withConclusion(ChecksConclusion.SUCCESS)
+        .withDetailsURL(DisplayURLProvider.get().getRunURL(run))
+        .withCompletedAt(LocalDateTime.now(ZoneOffset.UTC))
+        .build();
 
-if (env.GIT_BRANCH && env.GIT_URL) {
-    branch = env.GIT_BRANCH
-    repo = env.GIT_URL
-} else if (REPOSITORY && BRANCH){
-    branch = BRANCH
-    repo = REPOSITORY
-}
+ChecksPublisher publisher = ChecksPublisherFactory.fromRun(run);
+
+publisher.publish(details);
 
 pipeline {
     agent none
@@ -49,44 +52,75 @@ pipeline {
                     }
                     steps {
                         script {
-                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                            executeCommand("run_cpu")
+                            withChecks('CPU'){
+                                checkoutProject(env.GIT_BRANCH, env.GIT_URL)
+                                executeCommand("run_cpu")
+                            }
                         }
                     }
                     post {
-                        success {
-                            print "SUCCESS"
-                        }
                         failure {
-                            print "FAILURE"
-                        }
-                        unstable {
-                            print "UNSTABLE"
+                            currentBuild.result = "FAILURE"
                         }
                         cleanup {
                             cleanWs()
                         }
                     }
                 }
-                stage("GPU") {
+                stage("GPU-SINGLE") {
                     agent {
                         node { label 'rocm' }
                     }
                     steps {
                         script {
-                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                            executeCommand("run_cpu")
+                            checkoutProject(env.GIT_BRANCH, env.GIT_URL)
+                            executeCommand("run_gpu_single")
                         }
                     }
                     post {
-                        success {
-                            print "SUCCESS"
-                        }
                         failure {
-                            print "FAILURE"
+                            currentBuild.result = "FAILURE"
                         }
-                        unstable {
-                            print "UNSTABLE"
+                        cleanup {
+                            cleanWs()
+                        }
+                    }
+                }
+                stage("GPU-MULTI") {
+                    agent {
+                        node { label 'rocm' }
+                    }
+                    steps {
+                        script {
+                            if (env.GIT_BRANCH.contains("r2.9")){
+                                label += "&&multi_gpu"
+                            }
+                            checkoutProject(env.GIT_BRANCH, env.GIT_URL)
+                            executeCommand("run_gpu_multi")
+                        }
+                    }
+                    post {
+                        failure {
+                            currentBuild.result = "FAILURE"
+                        }
+                        cleanup {
+                            cleanWs()
+                        }
+                    }
+                }
+                stage("SANITY") {
+                    agent {
+                        node { label 'rocm' }
+                    }
+                    steps {
+                        script {
+                            checkoutProject(env.GIT_BRANCH, env.GIT_URL)
+                            executeCommand("rocm_ci_sanity")
+                        }
+                    }
+                    post {
+                        failure {
+                            currentBuild.result = "FAILURE"
                         }
                         cleanup {
                             cleanWs()

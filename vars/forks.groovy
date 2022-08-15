@@ -26,7 +26,7 @@ def executeStages(){
         stages[it] = {
             try{
                 def label = "rocm"
-                if (branch.contains("r2.9" && "run_gpu_multi")){
+                if (branch.contains("r2.9") && it == "run_gpu_multi"){
                     label += "&&multi_gpu"
                 } 
                 node(label){
