@@ -30,26 +30,23 @@ def call() {
     def stages = [:]
 
     DOCKER_IMAGES.each() {
-        stages[it] = {
+        def stage = it.split(":")[-1].replace("-multipython","")
+        stages[stage] = {
             node("rocm") {
                 try {
                     timeout(time: 12, unit: 'HOURS') {
+                        cleanWs()
                         stage("Pull docker image") {
                             println('[INFO] Pull the ROCm multipython docker image')
                             sh "docker pull ${it}"
                         }
-                        
                         stage("Clone ROCm TF") {
                             println("[INFO] Clone ROCm TF Github tensorflowRepo")
-
-                            checkout(
-                                [
-                                    $class: 'GitSCM',
-                                    userRemoteConfigs: [[url: tensorflowRepo]],
-                                    branches: [[name: tensorflowBranch]],
-                                    extensions: [[$class: "RelativeTargetDirectory", relativeTargetDir: TF_CLONE_DIR]]
-                                ]
-                            )
+                            checkout([$class: 'GitSCM',
+                                userRemoteConfigs: [[url: tensorflowRepo]],
+                                branches: [[name: tensorflowBranch]],
+                                extensions: [[$class: "RelativeTargetDirectory", relativeTargetDir: TF_CLONE_DIR]]
+                            ])
                         }
 
                         sh "mkdir -p ${TF_ARTIFACTS_DIR}"
@@ -58,60 +55,62 @@ def call() {
                             stage("Python 3.7 whl") {
                                 println("[INFO] Build the Python 3.7 whl")
                                 sh "docker run \
-                                        ${DOCKER_RUN_OPTIONS} \
-                                        -v ${WORKSPACE}/${TF_CLONE_DIR}:/tensorflow \
-                                        -w /tensorflow \
-                                        ${it} \
-                                        ./tensorflow/tools/ci_build/linux/rocm/rocm_py37_pip.sh"
+                                    ${DOCKER_RUN_OPTIONS} \
+                                    -v ${WORKSPACE}/${TF_CLONE_DIR}:/tensorflow \
+                                    -w /tensorflow \
+                                    ${it} \
+                                    ./tensorflow/tools/ci_build/linux/rocm/rocm_py37_pip.sh"
 
-                                sh     "cp pip_test/whl/* ../${TF_ARTIFACTS_DIR}/"
+                                sh "cp pip_test/whl/* ../${TF_ARTIFACTS_DIR}/"
                             }
 
                             stage("Python 3.8 whl") {
                                 println("[INFO] Build the Python 3.8 whl")
                                 sh "docker run \
-                                        ${DOCKER_RUN_OPTIONS} \
-                                        -v ${WORKSPACE}/${TF_CLONE_DIR}:/tensorflow \
-                                        -w /tensorflow \
-                                        ${it} \
-                                        ./tensorflow/tools/ci_build/linux/rocm/rocm_py38_pip.sh"
+                                    ${DOCKER_RUN_OPTIONS} \
+                                    -v ${WORKSPACE}/${TF_CLONE_DIR}:/tensorflow \
+                                    -w /tensorflow \
+                                    ${it} \
+                                    ./tensorflow/tools/ci_build/linux/rocm/rocm_py38_pip.sh"
 
-                                sh     "cp pip_test/whl/* ../${TF_ARTIFACTS_DIR}/"
+                                sh "cp pip_test/whl/* ../${TF_ARTIFACTS_DIR}/"
                             }
 
                             stage("Python 3.9 whl") {
                                 println("[INFO] Build the Python 3.9 whl")
                                 sh "docker run \
-                                        ${DOCKER_RUN_OPTIONS} \
-                                        -v ${WORKSPACE}/${TF_CLONE_DIR}:/tensorflow \
-                                        -w /tensorflow \
-                                        ${it} \
-                                        ./tensorflow/tools/ci_build/linux/rocm/rocm_py39_pip.sh"
+                                    ${DOCKER_RUN_OPTIONS} \
+                                    -v ${WORKSPACE}/${TF_CLONE_DIR}:/tensorflow \
+                                    -w /tensorflow \
+                                    ${it} \
+                                    ./tensorflow/tools/ci_build/linux/rocm/rocm_py39_pip.sh"
 
-                                sh     "cp pip_test/whl/* ../${TF_ARTIFACTS_DIR}/"
-                            }                        
+                                sh "cp pip_test/whl/* ../${TF_ARTIFACTS_DIR}/"
+                            }
                         }
 
                         stage("Rename whls") {
                             println("[INFO] Rename whls")
                             sh "#!/usr/bin/env bash \n" +
                                 "set -eux && cd ${TF_ARTIFACTS_DIR} && " +
-                                        'for filename in *.whl; do \
-                                        new_filename=${filename//linux/manylinux1}; \
-                                        mv $filename $new_filename; \
-                                        done'                        
+                                'for filename in *.whl; do \
+                                new_filename=${filename//linux/manylinux1}; \
+                                mv $filename $new_filename; \
+                                done'
                         }
                     }
-                } catch(e) {
+                } catch (FlowInterruptedException e) {
+                    currentBuild.description = "<b style='color: #641e16'>Failure reason:</b> <span style='color: #b03a2e'>Build was aborted</span><br/>"
+                    currentBuild.result = "ABORTED"
+                }
+                catch(e) {
                     println("[ERROR] FAILED on ${it} stage")
                     currentBuild.result = "FAILURE"
                 } finally {
                     archiveArtifacts artifacts: "${TF_ARTIFACTS_DIR}/*", fingerprint: true
-                    cleanWs()
                 }
             }
         }
     }
-
     parallel stages
 }

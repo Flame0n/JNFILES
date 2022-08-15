@@ -1,7 +1,7 @@
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
 
 def setGlobalConfig() {
-    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'builder-amd', usernameVariable: 'email', passwordVariable: 'name']]) {
+    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'builder-amd', usernamevalue: 'email', passwordvalue: 'name']]) {
         sh """
             git config user.email $email
             git config user.name $name
@@ -44,10 +44,11 @@ def executePreBuild(String stage, String script) {
 def executeStages(Map options){
     Map stages = [:]
     Map stagesMap = ["run_gpu_multi": options.preScriptMulti, "run_gpu_single": options.preScriptSingle]
-    stagesMap.each() { key, variable ->
+    stagesMap.each() { key, value ->
         stages[key] = {
             try{
                 node("rocm"){
+                    cleanWs()
                     restartDocker()
                     checkout(
                         [
@@ -57,9 +58,9 @@ def executeStages(Map options){
                         ]
                     )
                     stage("Execute prebuild scripts"){
-                        if (variable) {
+                        if (value) {
                             setGlobalConfig()
-                            executePreBuild(key, variable)
+                            executePreBuild(key, value)
                         }
                     }
                     stage("Execute unit tests"){
@@ -83,14 +84,8 @@ def call(Map options) {
     } catch (FlowInterruptedException e) {
         currentBuild.description = "<b style='color: #641e16'>Failure reason:</b> <span style='color: #b03a2e'>Build was aborted</span><br/>"
         currentBuild.result = "ABORTED"
-        throw e
     } catch(e) {
         currentBuild.result = "FAILURE"
         currentBuild.description = "<b>FAILURE</b><br/>"
-    } finally {
-        if (currentBuild.result != "FAILURE"){
-            currentBuild.result = "SUCCESS"
-            currentBuild.description = "<b>Success</b><br/>"
-        }
     }
 }
