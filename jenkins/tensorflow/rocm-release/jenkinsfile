@@ -1,0 +1,128 @@
+def executeTests() {
+    sh """
+        tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/run_csb_tests.sh
+    """
+}
+
+def executePyOld() {
+    sh """
+        export CI_DOCKER_EXTRA_PARAMS="-e CI_BUILD_PYTHON=python2 -e PIP_TEST_ROOT=pip2_test -e NO_TEST_ON_INSTALL=1 -e NO_TEST_USER_OPS=1 -e NO_TEST_TFDBG_BINARIES=1"
+        tensorflow/tools/ci_build/ci_build.sh ROCM tensorflow/tools/ci_build/builds/pip.sh rocm -c opt --config=rocm
+    """
+}
+
+def executePyFive() {
+    sh """
+        export CI_DOCKER_EXTRA_PARAMS="-e CI_BUILD_PYTHON=python3.5 -e PIP_TEST_ROOT=pip35_test -e NO_TEST_ON_INSTALL=1 -e NO_TEST_USER_OPS=1 -e NO_TEST_TFDBG_BINARIES=1"
+        tensorflow/tools/ci_build/ci_build.sh ROCM tensorflow/tools/ci_build/builds/pip.sh rocm -c opt --config=rocm
+    """
+}
+
+def executePySix() {
+    sh """
+        # Need to change some packages for Python3.6
+        sed -i 's/install_pip_packages.sh/install_python3.6_pip_packages.sh/g' tensorflow/tools/ci_build/Dockerfile.rocm
+
+        # Build Python3.6 whl files (todo: add some pip tests)
+        export CI_DOCKER_EXTRA_PARAMS="-e CI_BUILD_PYTHON=python3.6 -e PIP_TEST_ROOT=pip36_test -e NO_TEST_ON_INSTALL=1 -e NO_TEST_USER_OPS=1 -e NO_TEST_TFDBG_BINARIES=1"
+        bash -x tensorflow/tools/ci_build/ci_build.sh ROCM bash -x tensorflow/tools/ci_build/builds/pip.sh rocm -c opt --config=rocm
+
+        # Return to original state
+        git checkout tensorflow/tools/ci_build/Dockerfile.rocm
+    """
+}
+
+def executePySeven() {
+    sh """
+        # Need to change some packages for Python3.7
+        cp tensorflow/tools/ci_build/install/install_python3.6_pip_packages.sh tensorflow/tools/ci_build/install/install_python3.7_pip_packages.sh
+        sed -i 's|Python 3.6|Python 3.7|g' tensorflow/tools/ci_build/install/install_python3.7_pip_packages.sh
+        sed -i 's|python/3.6.1|python/3.7.3|g' tensorflow/tools/ci_build/install/install_python3.7_pip_packages.sh
+        sed -i 's|Python-3.6.1|Python-3.7.3|g' tensorflow/tools/ci_build/install/install_python3.7_pip_packages.sh
+        sed -i 's|pip3.6|pip3.7|g' tensorflow/tools/ci_build/install/install_python3.7_pip_packages.sh
+        sed -i 's/scipy==0.18.1/scipy/g' tensorflow/tools/ci_build/install/install_python3.7_pip_packages.sh
+        sed -i 's/scikit-learn==0.19.1/scikit-learn/g' tensorflow/tools/ci_build/install/install_python3.7_pip_packages.sh
+        sed -i 's/pandas==0.19.2/pandas/g' tensorflow/tools/ci_build/install/install_python3.7_pip_packages.sh
+        sed -i 's/python-dev/python-dev libblas-dev liblapack-dev libatlas-base-dev gfortran/g' tensorflow/tools/ci_build/install/install_python3.7_pip_packages.sh
+        sed -i 's/install_pip_packages.sh/install_python3.7_pip_packages.sh/g' tensorflow/tools/ci_build/Dockerfile.rocm
+
+        # Build Python3.7 whl files (todo: add some pip tests)
+        export CI_DOCKER_EXTRA_PARAMS="-e CI_BUILD_PYTHON=python3.7 -e PIP_TEST_ROOT=pip37_test -e NO_TEST_ON_INSTALL=1 -e NO_TEST_USER_OPS=1 -e NO_TEST_TFDBG_BINARIES=1"
+        bash -x tensorflow/tools/ci_build/ci_build.sh ROCM bash -x tensorflow/tools/ci_build/builds/pip.sh rocm -c opt --config=rocm
+
+        # Return to original state
+        git checkout tensorflow/tools/ci_build/Dockerfile.rocm
+    """
+}
+
+def restartDocker(){
+    sh """
+        systemctl status docker | grep 'Active:'
+        sudo /usr/bin/pkill -f docker
+        sudo /bin/systemctl restart docker
+        docker system prune -a -f
+        systemctl status docker | grep 'Active:'
+    """
+}
+
+def checkoutProject(String repo, String branch){
+    checkout(
+        [
+            $class: 'GitSCM',
+            userRemoteConfigs: [[url: repo]],
+            branches: [[name: branch]]
+        ]
+    )
+}
+
+pipeline {
+    agent {
+        node { label 'rocm' }
+    }
+    options {
+        timeout(time: 10, unit: 'HOURS')
+        timestamps()
+    }
+    stages {
+        stage('Restart docker service') {   
+            steps {
+                restartDocker()
+            }
+        }
+        stage('Clone repository') {   
+            steps {
+                checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+            }
+        }
+        stage('Tests execution') {   
+            steps {
+                executeTests()
+            }
+        }
+        stage('Python 2.7') {   
+            steps {
+                executePyOld()
+            }
+        }
+        stage('Python 3.5') {   
+            steps {
+                executePyFive()
+            }
+        }
+        stage('Python 3.6') {   
+            steps {
+                executePySix()
+            }
+        }
+        stage('Python 3.7') {   
+            steps {
+                executePySeven()
+            }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
+        }
+    }
+}
