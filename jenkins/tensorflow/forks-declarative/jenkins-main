@@ -1,0 +1,97 @@
+def restartDocker(){
+    sh """
+        systemctl status docker | grep 'Active:'
+        sudo /usr/bin/pkill -f docker
+        sudo /bin/systemctl restart docker
+        docker system prune -a -f
+        systemctl status docker | grep 'Active:'
+    """
+}
+
+def executeCommand(String executionType) {
+    /*
+    sh """
+        tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/${executionType}.sh
+    """
+    */
+}
+
+def checkoutProject(String repo, String branch){
+    checkout(
+        [
+            $class: 'GitSCM',
+            userRemoteConfigs: [[url: repo]],
+            branches: [[name: branch]]
+        ]
+    )
+}
+
+pipeline {
+    agent none
+    options {
+        timeout(time: 10, unit: 'HOURS')
+        timestamps()
+    }
+    stages {
+        parallel {
+            stage("Ubuntu-CPU") {
+                agent {
+                    node { label 'rocm' }
+                }
+                steps {
+                    script {
+                        cleanWs()
+                        restartDocker()
+                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                        executeCommand("run_cpu")
+                    }
+                }
+                post {
+                    cleanup {
+                        cleanWs()
+                    }
+                }
+            }
+            stage("Ubuntu-GPU-single") {
+                agent {
+                    node { label 'rocm' }
+                }
+                steps {
+                    script {
+                        cleanWs()
+                        restartDocker()
+                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                        executeCommand("run_gpu_single")
+                    }
+                }
+
+            }
+            stage("Ubuntu-GPU-multi") {
+                agent {
+                    node { label 'rocm' }
+                }
+                steps {
+                    script {
+                        cleanWs()
+                        restartDocker()
+                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                        executeCommand("run_gpu_multi")
+                    }
+                }
+            }
+            stage("Ubuntu-sanity") {
+                agent {
+                    node { label 'rocm' }
+                }
+                steps {
+                    script {
+                        cleanWs()
+                        restartDocker()
+                        checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                        executeCommand("rocm_ci_sanity")
+                    }
+                }
+            }
+        }
+    }
+}
