@@ -235,7 +235,7 @@ def executeStages(){
 
 def call(Map options) {
     try {
-        executeStages(options)
+        executeStages()
     } catch (FlowInterruptedException e) {
         currentBuild.description = "<b style='color: #641e16'>Failure reason:</b> <span style='color: #b03a2e'>Build was aborted</span><br/>"
         currentBuild.result = "ABORTED"
