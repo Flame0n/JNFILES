@@ -210,8 +210,8 @@ def executeStages(){
                     checkout(
                         [
                             $class: 'GitSCM',
-                            userRemoteConfigs: [[url: params.repositoryUrl]],
-                            branches: [[name: params.repositoryBranch]]
+                            userRemoteConfigs: [[url: "${params.repositoryUrl}"]],
+                            branches: [[name: "${params.repositoryBranch}"]]
                         ]
                     )
                     stage("Execute prebuild scripts"){
