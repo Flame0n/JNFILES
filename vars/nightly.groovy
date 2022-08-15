@@ -70,7 +70,7 @@ def NIGHTLY_UPSTREAM_MASTER = [
 
         #Update run_multi_gpu 
         git cherry-pick 4dd2a53b392c5252e3b012f7b8fcae23805556c4
-    """
+    """,
     preScriptSingle : """
         git remote add rocm http://github.com/ROCmSoftwarePlatform/tensorflow-upstream
         git fetch rocm
