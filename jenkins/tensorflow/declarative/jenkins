@@ -44,63 +44,7 @@ pipeline {
                         }
                     }
                 }
-                stage("GPU-SINGLE") {
-                    agent {
-                        node { label 'rocm' }
-                    }
-                    steps {
-                        script {
-                            withChecks('GPU-SINGLE'){
-                                checkoutProject(env.GIT_BRANCH, env.GIT_URL)
-                                executeCommand("run_gpu_single")
-                            }
-                        }
-                    }
-                    post {
-                        cleanup {
-                            cleanWs()
-                        }
-                    }
-                }
-                stage("GPU-MULTI") {
-                    agent {
-                        node { label 'rocm' }
-                    }
-                    steps {
-                        script {
-                            withChecks('GPU-MULTI'){
-                                if (env.GIT_BRANCH.contains("r2.9")){
-                                    label += "&&multi_gpu"
-                                }
-                                checkoutProject(env.GIT_BRANCH, env.GIT_URL)
-                                executeCommand("run_gpu_multi")
-                            }
-                        }
-                    }
-                    post {
-                        cleanup {
-                            cleanWs()
-                        }
-                    }
-                }
-                stage("SANITY") {
-                    agent {
-                        node { label 'rocm' }
-                    }
-                    steps {
-                        script {
-                            withChecks('SANITY'){
-                                checkoutProject(env.GIT_BRANCH, env.GIT_URL)
-                                executeCommand("rocm_ci_sanity")
-                            }
-                        }
-                    }
-                    post {
-                        cleanup {
-                            cleanWs()
-                        }
-                    }
-                }
+
             }
         }
     }
