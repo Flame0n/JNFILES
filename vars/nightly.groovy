@@ -45,7 +45,8 @@ def executeStages(Map options){
     Map stages = [:]
     Map stagesMap = ["run_gpu_multi": options.preScriptMulti, "run_gpu_single": options.preScriptSingle]
     stagesMap.each() { key, value ->
-        stages[key] = {
+        def stageName = key == "run_gpu_multi" ? "Ubuntu-GPU-multi" : "Ubuntu-GPU-single"
+        stages[stageName] = {
             try{
                 node("rocm"){
                     cleanWs()
