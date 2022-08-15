@@ -34,39 +34,67 @@ if (env.GIT_BRANCH && env.GIT_URL) {
     repo = REPOSITORY
 }
 
-
-
 pipeline {
-    agent {
-        node { label 'rocm' }
-    }
+    agent none
     options {
         timeout(time: 10, unit: 'HOURS')
         timestamps()
     }
     stages {
-        stage("CPU") {
-            steps {
-                script {
-                    echo "[DEBUG] ${env.GIT_BRANCH} ${env.GIT_URL}"
-                    checkoutProject(env.GIT_URL, env.GIT_BRANCH)
-                    executeCommand("run_cpu")
+        stage('Run Tests') {
+            parallel {
+                stage("CPU") {
+                    agent {
+                        node { label 'rocm' }
+                    }
+                    steps {
+                        script {
+                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                            executeCommand("run_cpu")
+                        }
+                    }
+                    post {
+                        success {
+                            print "SUCCESS"
+                        }
+                        failure {
+                            print "FAILURE"
+                        }
+                        unstable {
+                            print "UNSTABLE"
+                        }
+                        cleanup {
+                            cleanWs()
+                        }
+                    }
+                }
+                stage("GPU") {
+                    agent {
+                        node { label 'rocm' }
+                    }
+                    steps {
+                        script {
+                            checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                            executeCommand("run_cpu")
+                        }
+                    }
+                    post {
+                        success {
+                            print "SUCCESS"
+                        }
+                        failure {
+                            print "FAILURE"
+                        }
+                        unstable {
+                            print "UNSTABLE"
+                        }
+                        cleanup {
+                            cleanWs()
+                        }
+                    }
                 }
             }
         }
     }
-    post {
-        success {
-            print "SUCCESS"
-        }
-        failure {
-            print "FAILURE"
-        }
-        unstable {
-            print "UNSTABLE"
-        }
-        cleanup {
-            cleanWs()
-        }
-    }
+    
 }
