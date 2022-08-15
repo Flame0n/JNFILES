@@ -32,17 +32,13 @@ pipeline {
                     }
                     steps {
                         script {
-                            withChecks('CPU'){
+                            //withChecks('CPU'){
                                 checkoutProject(env.GIT_BRANCH, env.GIT_URL)
                                 executeCommand("run_cpu")
-                            }
+                            //}
                         }
                     }
-                    post {
-                        cleanup {
-                            cleanWs()
-                        }
-                    }
+
                 }
 
             }
