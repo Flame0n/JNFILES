@@ -240,6 +240,8 @@ def call() {
         currentBuild.description = "<b style='color: #641e16'>Failure reason:</b> <span style='color: #b03a2e'>Build was aborted</span><br/>"
         currentBuild.result = "ABORTED"
     } catch(e) {
+        println(e.toString())
+        println(e.getMessage())
         currentBuild.result = "FAILURE"
         currentBuild.description = "<b>FAILURE</b><br/>"
     }
