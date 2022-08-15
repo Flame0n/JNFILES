@@ -91,7 +91,7 @@ pipeline {
         }
         stage('Clone repository') {   
             steps {
-                checkoutProject(env.GIT_URL, env.GIT_BRANCH)
+                checkoutProject(params.repositoryUrl, params.repositoryBranch)
             }
         }
         stage('Tests execution') {   
