@@ -85,7 +85,7 @@ pipeline {
         }
         stage('Clone repository') {   
             steps {
-                checkoutProject(params.repositoryUrl, params.repositoryBranch)
+                checkoutProject("https://github.com/tensorflow/tensorflow.git", "refs/tags/v1.15.0")
             }
         }
         stage('Tests execution') {   
