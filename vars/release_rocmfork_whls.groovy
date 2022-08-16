@@ -1,6 +1,6 @@
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
 
-def call() {
+def call(Map options) {
     def TF_CLONE_DIR = 'tensorflow'
     def TF_ARTIFACTS_DIR = 'artifactory'
     def DOCKER_IMAGES = ['rocm/tensorflow-autobuilds:ubuntu20.04-rocm5.2.0-multipython']
@@ -26,9 +26,10 @@ def call() {
     --device=/dev/dri \
     "
 
-    def tensorflowRepo = params.repositoryUrl
-    def tensorflowBranch= params.repositoryBranch
+    def tensorflowRepo = options.repositoryUrl
+    def tensorflowBranch= options.repositoryBranch
     def dockerOptions = ""
+
     if (tensorflowBranch == "master" && tensorflowBranch == "develop-upstream") {
         dockerOptions = DOCKER_RUN_OPTIONS_NIGHTLY
     } else {
