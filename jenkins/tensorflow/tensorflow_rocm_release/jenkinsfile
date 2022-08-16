@@ -1,6 +1,9 @@
 import groovy.transform.Field
 
 @Field final Map STAGES_MAP = [
+    "Unit tests" : """
+        tensorflow/tools/ci_build/ci_build.sh ROCM ./tensorflow/tools/ci_build/linux/rocm/run_csb_tests.sh
+    """,
     "Python 2.7" : """
         export CI_DOCKER_EXTRA_PARAMS="-e CI_BUILD_PYTHON=python2 -e PIP_TEST_ROOT=pip2_test -e NO_TEST_ON_INSTALL=1 -e NO_TEST_USER_OPS=1 -e NO_TEST_TFDBG_BINARIES=1"
         tensorflow/tools/ci_build/ci_build.sh ROCM tensorflow/tools/ci_build/builds/pip.sh rocm -c opt --config=rocm
@@ -45,8 +48,8 @@ import groovy.transform.Field
 ]
 
 
-def executeScripts(String scikit) {
-    sh script
+def executeScripts(String customScript) {
+    sh customScript
 }
 
 def restartDocker(){
