@@ -1,0 +1,9 @@
+library identifier: "JNFILES@main", retriever: modernSCM(
+  [$class: 'GitSCMSource',
+   remote: 'https://github.com/Flame0n/JNFILES.git',
+   credentialsId: 'AVK'])
+
+def options = [repositoryUrl: "https://github.com/ROCmSoftwarePlatform/tensorflow-upstream.git/",
+              repositoryBranch: "r2.8-rocm-enhanced"]
+
+nightly(options)

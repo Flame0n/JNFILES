@@ -181,9 +181,9 @@ def executePreBuild(String script) {
     }
 }
 
-def executeStages(){
+def executeStages(Map options){
     def executionConfig
-    switch(params.repositoryBranch) {
+    switch(options.repositoryBranch) {
         case "develop-upstream":
             executionConfig = NIGHTLY_ROCMFORK_DEVELOP_UPSTREAM
             break
@@ -210,8 +210,8 @@ def executeStages(){
                     checkout(
                         [
                             $class: 'GitSCM',
-                            userRemoteConfigs: [[url: "${params.repositoryUrl}"]],
-                            branches: [[name: "${params.repositoryBranch}"]]
+                            userRemoteConfigs: [[url: "${options.repositoryUrl}"]],
+                            branches: [[name: "${options.repositoryBranch}"]]
                         ]
                     )
                     stage("Execute prebuild scripts"){
@@ -235,9 +235,9 @@ def executeStages(){
     parallel stages
 }
 
-def call() {
+def call(Map options) {
     try {
-        executeStages()
+        executeStages(options)
     } catch (FlowInterruptedException e) {
         currentBuild.description = "<b style='color: #641e16'>Failure reason:</b> <span style='color: #b03a2e'>Build was aborted</span><br/>"
         currentBuild.result = "ABORTED"
