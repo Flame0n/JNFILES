@@ -99,14 +99,18 @@ def checkoutProject(String repo, String branch){
     )
 }
 
+def branch
+def repository
+def config
+
 if (!env.GIT_URL && !env.GIT_BRANCH){
-    def branch = "master"
-    def repository = "https://github.com/ROCmSoftwarePlatform/apex"
-    def config = CONGIF_MAP.nightly
+    branch = "master"
+    repository = "https://github.com/ROCmSoftwarePlatform/apex"
+    config = CONGIF_MAP.nightly
 } else {
-    def branch = env.GIT_BRANCH
-    def repository = env.GIT_URL
-    def config = env.JOB_NAME.contains("master") ? CONGIF_MAP.master : CONGIF_MAP.release
+    branch = env.GIT_BRANCH
+    repository = env.GIT_URL
+    config = env.JOB_NAME.contains("master") ? CONGIF_MAP.master : CONGIF_MAP.release
 }
 
 pipeline {
