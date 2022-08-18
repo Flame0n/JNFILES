@@ -76,7 +76,7 @@ def CONGIF_MAP = [
 ]
 
 def executeCommand(String customScript) {
-    sh customScript
+    //sh customScript
 }
 
 def restartDocker(){
