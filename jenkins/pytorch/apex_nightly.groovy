@@ -118,7 +118,7 @@ pipeline {
         timestamps()
     }
     stages {
-        stage(config.stage) {   
+        stage("${config.stage}") {   
             steps {
                 script {
                     restartDocker()
