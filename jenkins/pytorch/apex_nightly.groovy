@@ -111,7 +111,7 @@ if (!env.GIT_URL && !env.GIT_BRANCH){
 
 pipeline {
     agent {
-        node { label config.node }
+        node { label "${config.node ?: "none"}" }
     }
     options {
         timeout(time: 2, unit: 'HOURS')
