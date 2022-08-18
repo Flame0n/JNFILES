@@ -4,6 +4,6 @@ library identifier: "JNFILES@main", retriever: modernSCM(
    credentialsId: 'AVK'])
 
 def options = [repositoryUrl: "https://github.com/ROCmSoftwarePlatform/tensorflow-upstream.git/",
-              repositoryBranch: "r2.9-rocm-enhanced"]
+              repositoryBranch: "r2.8"]
 
 nightly(options)
