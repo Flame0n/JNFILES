@@ -76,7 +76,7 @@ def CONGIF_MAP = [
 ]
 
 def executeCommand(String customScript) {
-    //sh customScript
+    sh customScript
 }
 
 def restartDocker(){
@@ -122,7 +122,7 @@ pipeline {
         timestamps()
     }
     stages {
-        stage("Default") {   
+        stage("${config.stage}") {   
             steps {
                 script {
                     restartDocker()
