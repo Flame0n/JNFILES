@@ -122,7 +122,7 @@ pipeline {
         timestamps()
     }
     stages {
-        stage("Nightrly") {   
+        stage("Master") {   
             steps {
                 script {
                     restartDocker()
