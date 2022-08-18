@@ -3,6 +3,9 @@ def CONGIF_MAP = [
         stage: "Nightly",
         node: "rocm",
         script: """
+            pwd
+            mkdir -p wheels
+
             docker_image=rocm/pytorch:latest
 
             #docker build . -f Dockerfile -t \$docker_image
@@ -129,8 +132,7 @@ pipeline {
         always {
             archiveArtifacts artifacts: "*.log", fingerprint: true
             archiveArtifacts artifacts: "wheels/*.whl", fingerprint: true
-            emailext 
-                to: "lexainb3@gmail.com",
+            emailext to: "lexainb3@gmail.com",
                 subject: "jenkins build:${currentBuild.currentResult}: ${env.JOB_NAME}",
                 body: "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nMore Info can be found here: ${env.BUILD_URL}"
         }
