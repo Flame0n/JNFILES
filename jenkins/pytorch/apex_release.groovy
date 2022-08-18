@@ -1,7 +1,6 @@
-def CONGIF_MAP = [
+def CONFIG_MAP = [
     nightly : [
         stage: "Nightly",
-        node: "rocm",
         script: """
             pwd
             mkdir -p wheels
@@ -29,7 +28,6 @@ def CONGIF_MAP = [
 
     master : [
         stage: "Master",
-        node: "gfx906",
         script: """
             docker_image=rocm/pytorch:latest
 
@@ -57,7 +55,6 @@ def CONGIF_MAP = [
 
     release: [
         stage: "Release",
-        node: "gfx906", 
         script: """
             docker_image=rocm/pytorch:latest
 
@@ -106,16 +103,16 @@ def config
 if (!env.GIT_URL && !env.GIT_BRANCH){
     branch = "master"
     repository = "https://github.com/ROCmSoftwarePlatform/apex"
-    config = CONGIF_MAP.nightly
+    config = CONFIG_MAP.nightly
 } else {
     branch = env.GIT_BRANCH
     repository = env.GIT_URL
-    config = env.JOB_NAME.contains("master") ? CONGIF_MAP.master : CONGIF_MAP.release
+    config = env.JOB_NAME.contains("master") ? CONFIG_MAP.master : CONFIG_MAP.release
 }
 
 pipeline {
     agent {
-        node { label "${config.node ?: "none"}" }
+        node { label "gfx906" }
     }
     options {
         timeout(time: 2, unit: 'HOURS')
@@ -136,6 +133,8 @@ pipeline {
         always {
             archiveArtifacts artifacts: "*.log", allowEmptyArchive: true
             archiveArtifacts artifacts: "wheels/*.whl", allowEmptyArchive: true
+        } 
+        failure {
             emailext to: "lexainb3@gmail.com",
                 subject: "jenkins build:${currentBuild.currentResult}: ${env.JOB_NAME}",
                 body: "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nMore Info can be found here: ${env.BUILD_URL}"
