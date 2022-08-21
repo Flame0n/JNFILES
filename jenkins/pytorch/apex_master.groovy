@@ -103,7 +103,7 @@ def config
 if (!env.GIT_URL && !env.GIT_BRANCH){
     branch = "master"
     repository = "https://github.com/ROCmSoftwarePlatform/apex"
-    config = CONFIG_MAP.nightly
+    config = CONFIG_MAP.master
 } else {
     branch = env.GIT_BRANCH
     repository = env.GIT_URL
