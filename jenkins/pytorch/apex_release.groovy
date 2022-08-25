@@ -1,58 +1,4 @@
 def CONFIG_MAP = [
-    nightly : [
-        stage: "Nightly",
-        script: """
-            pwd
-            mkdir -p wheels
-
-            docker_image=rocm/pytorch:latest
-
-            #docker build . -f Dockerfile -t \$docker_image
-            docker run -it --detach --network=host --device=/dev/kfd --device=/dev/dri --ipc=host --shm-size 16G  --group-add video --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v `pwd`:/apex --name apex-rocm-nightly \$docker_image
-            docker exec apex-rocm-nightly bash -c "pip uninstall -y apex"
-            docker exec apex-rocm-nightly bash -c "pip install ninja"
-
-            ### Install Apex ###
-            docker exec apex-rocm-nightly bash -c "cd /apex && python setup.py install --cpp_ext --cuda_ext bdist_wheel 2>&1 |  tee apex_build.log"
-
-            ### Single-GPU unit tests ###
-            docker exec apex-rocm-nightly bash -c "cd /apex/tests/L0/ && bash run_rocm.sh"
-
-            ### Multi-GPU unit tests ###
-            docker exec apex-rocm-nightly bash -c "cd /apex/tests/distributed/ && bash run_rocm_distributed.sh"
-
-            ### WHEEL ###
-            docker exec apex-rocm-nightly bash -c "cd /apex; cp -a dist/*whl wheels/" 
-        """
-    ],
-
-    master : [
-        stage: "Master",
-        script: """
-            docker_image=rocm/pytorch:latest
-
-            #docker build . -f Dockerfile -t \$docker_image
-            docker run -it --detach --network=host --device=/dev/kfd --device=/dev/dri --ipc=host --shm-size 16G  --group-add video --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v `pwd`:/apex --name apex-rocm \$docker_image
-            # Re-install PyTorch from the tip of ROCm fork
-            docker exec apex-rocm bash -c "pip uninstall -y torch"
-            docker exec apex-rocm bash -c "cd /var/lib/jenkins && rm -R pytorch && git clone https://github.com/ROCmSoftwarePlatform/pytorch.git"
-            docker exec apex-rocm bash -c "cd /var/lib/jenkins/pytorch && git submodule sync && git submodule update --init --recursive && .jenkins/pytorch/build.sh 2>&1 |& tee build_log"
-
-            # Re-install Apex
-            docker exec apex-rocm bash -c "pip uninstall -y apex"
-            docker exec apex-rocm bash -c "pip install ninja"
-            docker exec apex-rocm bash -c "cd /apex && python setup.py install  --cpp_ext --cuda_ext"
-
-            # Run Apex unit tests
-            docker exec apex-rocm bash -c "cd /apex/tests/L0/ && bash run_rocm.sh"
-            docker exec apex-rocm bash -c "cd /apex/tests/distributed/ && bash run_rocm_distributed.sh"
-            docker exec apex-rocm bash -c "cd /apex/tests/distributed/ && bash run_rocm_distributed.sh"
-
-            # Run Apex extension unit tests
-            docker exec apex-rocm bash -c "cd /apex/apex/contrib/test/ && python run_rocm_extensions.py"
-        """
-    ],
-
     release: [
         stage: "Release",
         script: """
@@ -107,7 +53,7 @@ if (!env.GIT_URL && !env.GIT_BRANCH){
 } else {
     branch = env.GIT_BRANCH
     repository = env.GIT_URL
-    config = env.JOB_NAME.contains("master") ? CONFIG_MAP.master : CONFIG_MAP.release
+    config = env.JOB_NAME.release
 }
 
 pipeline {

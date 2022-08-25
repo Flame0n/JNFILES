@@ -24,51 +24,6 @@ def CONFIG_MAP = [
             ### WHEEL ###
             docker exec apex-rocm-nightly bash -c "cd /apex; cp -a dist/*whl wheels/" 
         """
-    ],
-
-    master : [
-        stage: "Master",
-        script: """
-            docker_image=rocm/pytorch:latest
-
-            #docker build . -f Dockerfile -t \$docker_image
-            docker run -it --detach --network=host --device=/dev/kfd --device=/dev/dri --ipc=host --shm-size 16G  --group-add video --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v `pwd`:/apex --name apex-rocm \$docker_image
-            # Re-install PyTorch from the tip of ROCm fork
-            docker exec apex-rocm bash -c "pip uninstall -y torch"
-            docker exec apex-rocm bash -c "cd /var/lib/jenkins && rm -R pytorch && git clone https://github.com/ROCmSoftwarePlatform/pytorch.git"
-            docker exec apex-rocm bash -c "cd /var/lib/jenkins/pytorch && git submodule sync && git submodule update --init --recursive && .jenkins/pytorch/build.sh 2>&1 |& tee build_log"
-
-            # Re-install Apex
-            docker exec apex-rocm bash -c "pip uninstall -y apex"
-            docker exec apex-rocm bash -c "pip install ninja"
-            docker exec apex-rocm bash -c "cd /apex && python setup.py install  --cpp_ext --cuda_ext"
-
-            # Run Apex unit tests
-            docker exec apex-rocm bash -c "cd /apex/tests/L0/ && bash run_rocm.sh"
-            docker exec apex-rocm bash -c "cd /apex/tests/distributed/ && bash run_rocm_distributed.sh"
-            docker exec apex-rocm bash -c "cd /apex/tests/distributed/ && bash run_rocm_distributed.sh"
-
-            # Run Apex extension unit tests
-            docker exec apex-rocm bash -c "cd /apex/apex/contrib/test/ && python run_rocm_extensions.py"
-        """
-    ],
-
-    release: [
-        stage: "Release",
-        script: """
-            docker_image=rocm/pytorch:latest
-
-            #docker build . -f Dockerfile -t \$docker_image
-            docker run -it --detach --network=host --device=/dev/kfd --device=/dev/dri --ipc=host --shm-size 16G  --group-add video --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v `pwd`:/apex --name apex-rocm \$docker_image
-            docker exec apex-rocm bash -c "pip uninstall -y apex"
-            docker exec apex-rocm bash -c "pip install ninja"
-            docker exec apex-rocm bash -c "cd /apex && python setup.py install  --cpp_ext --cuda_ext"
-            docker exec apex-rocm bash -c "cd /apex/tests/L0/ && bash run_rocm.sh"
-            docker exec apex-rocm bash -c "cd /apex/tests/distributed/ && bash run_rocm_distributed.sh"
-
-            # Run Apex extension unit tests
-            docker exec apex-rocm bash -c "cd /apex/apex/contrib/test/ && python run_rocm_extensions.py"
-        """
     ]
 ]
 
