@@ -42,7 +42,7 @@ def executeDockerContainer(String buildType) {
         sh """
             pwd
             mkdir -p wheels
-            pip uninstall -y apex"
+            pip uninstall -y apex
             pip install ninja
             cd /apex && python setup.py install  --cpp_ext --cuda_ext ${makeWheel}
             cd /apex/tests/L0/ && bash run_rocm.sh
@@ -96,7 +96,8 @@ pipeline {
     stages {
         stage(STAGE) {
             steps {
-                //library 'rocAutomationLibrary'
+                //DELETE COMMENT AFTER MERGE
+                //library 'rocAutomationLibrary' 
                 script {
                     restartDocker()
                     checkoutProject(REPOSITORY, BRANCH)
