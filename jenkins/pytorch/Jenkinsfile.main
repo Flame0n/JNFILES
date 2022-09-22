@@ -94,7 +94,7 @@ pipeline {
         timestamps()
     }
     stages {
-        stage("Master") {
+        stage(STAGE) {
             steps {
                 library 'rocAutomationLibrary'
                 script {
