@@ -96,7 +96,7 @@ pipeline {
     stages {
         stage(STAGE) {
             steps {
-                library 'rocAutomationLibrary'
+                //library 'rocAutomationLibrary'
                 script {
                     restartDocker()
                     checkoutProject(REPOSITORY, BRANCH)
