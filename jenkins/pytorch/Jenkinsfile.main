@@ -27,31 +27,36 @@ def executeDockerContainer(String buildType) {
     def args = "-it --detach --network=host --device=/dev/kfd --device=/dev/dri --ipc=host --shm-size 16G  --group-add video --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v `pwd`:/apex --name ${containerName} \$docker_image"
     def makeWheel = buildType == "Nightly" ? "bdist_wheel 2>&1 |  tee apex_build.log" : ""
 
-    docker.image(imageName).withRun(args) {
-        if (buildType == "Master") {
-            sh """
-                pip uninstall -y torch
-                cd /var/lib/jenkins && rm -R pytorch && git clone https://github.com/ROCmSoftwarePlatform/pytorch.git
-                cd /var/lib/jenkins/pytorch && git submodule sync && git submodule update --init --recursive && .jenkins/pytorch/build.sh 2>&1 |& tee build_log.log
-            """
-        }
+    def image = docker.image(imageName)
 
-        sh """
-            pwd
-            mkdir -p wheels
-            pip uninstall -y apex
-            pip install ninja
-            cd /apex && python setup.py install  --cpp_ext --cuda_ext ${makeWheel}
-            cd /apex/tests/L0/ && bash run_rocm.sh
-            cd /apex/tests/distributed/ && bash run_rocm_distributed.sh
-            cd /apex/apex/contrib/test/ && python run_rocm_extensions.py
-        """
-        
-        if (buildType == "Nightly") {
-            sh "cd /apex; cp -a dist/*whl wheels/"
-        } else {
-            sh "cd /apex/apex/contrib/test/ && python run_rocm_extensions.py"
-        }
+    sh """
+        pwd
+        mkdir -p wheels
+    """
+    image.withRun(args) {
+        image.inside{
+            if (buildType == "Master") {
+                sh """
+                    pip uninstall -y torch
+                    cd /var/lib/jenkins && rm -R pytorch && git clone https://github.com/ROCmSoftwarePlatform/pytorch.git
+                    cd /var/lib/jenkins/pytorch && git submodule sync && git submodule update --init --recursive && .jenkins/pytorch/build.sh 2>&1 |& tee build_log.log
+                """
+            }
+
+            sh """
+                pip uninstall -y -q apex
+                pip install ninja
+                cd apex && python setup.py install  --cpp_ext --cuda_ext ${makeWheel}
+                cd apex/tests/L0/ && bash run_rocm.sh
+                cd apex/tests/distributed/ && bash run_rocm_distributed.sh
+            """
+            
+            if (buildType == "Nightly") {
+                sh "cd /apex; cp -a dist/*whl wheels/"
+            } else {
+                sh "cd /apex/apex/contrib/test/ && python run_rocm_extensions.py"
+            }
+        }   
     }
 }
 
