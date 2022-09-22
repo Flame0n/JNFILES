@@ -1,5 +1,4 @@
-// NOTES: IN MAIN TYPE OF BUILD PREVIOUSLY WE HAVE TWO SAME STRINGS " "cd /apex/tests/distributed/ && bash run_rocm_distributed.sh"" 
-// WHY??? IS IT RE-TRY?
+// DELETE FUN 
 def restartDocker(){
     sh """
         systemctl status docker | grep 'Active:'
@@ -9,7 +8,7 @@ def restartDocker(){
         systemctl status docker | grep 'Active:'
     """
 }
-
+// DELETE FUN 
 def checkoutProject(String repo, String branch){
     checkout(
         [
