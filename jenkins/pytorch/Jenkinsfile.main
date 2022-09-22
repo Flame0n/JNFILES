@@ -38,7 +38,7 @@ def executeDockerContainer(String buildType) {
             sh """
                 pip uninstall -y torch
                 cd /var/lib/jenkins && rm -R pytorch && git clone https://github.com/ROCmSoftwarePlatform/pytorch.git
-                cd /var/lib/jenkins/pytorch && git submodule sync && git submodule update --init --recursive && .jenkins/pytorch/build.sh 2>&1 |& tee build_log.log
+                cd /var/lib/jenkins/pytorch && git submodule sync && git submodule update --init --recursive && .jenkins/pytorch/build.sh  2>&1 | tee build_log.log
             """
         }
 
