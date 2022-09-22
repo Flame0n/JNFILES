@@ -3,7 +3,26 @@
 
 // NOTES: IN MAIN TYPE OF BUILD PREVIOUSLY WE HAVE TWO SAME STRINGS " "cd /apex/tests/distributed/ && bash run_rocm_distributed.sh"" 
 // WHY??? IS IT RE-TRY?
+def restartDocker(){
+    sh """
+        systemctl status docker | grep 'Active:'
+        sudo /usr/bin/pkill -f docker
+        sudo /bin/systemctl restart docker
+        docker system prune -a -f
+        systemctl status docker | grep 'Active:'
+    """
+}
 
+def checkoutProject(String repo, String branch){
+    checkout(
+        [
+            $class: 'GitSCM',
+            userRemoteConfigs: [[url: repo]],
+            branches: [[name: branch]],
+            extensions: [[$class: 'CleanBeforeCheckout']],
+        ]
+    )
+}
 
 def executeDockerContainer(String buildType) {
     def imageName = "rocm/pytorch:latest"
